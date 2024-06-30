@@ -203,7 +203,10 @@
         overflow-y: scroll;
         height: 82%;
     }
-    @media(max-width:425px){
+    #backHome{
+        display: none;
+    }
+    @media(max-width:800px){
         .user_chats{
             position: fixed;
             top: 0px;
@@ -218,6 +221,12 @@
             position: absolute;
             bottom: 0px;
             width: 100%;
+        }
+        #backHome{
+            display: flex;
+            font-size: 25px;
+            padding: 0px 12px 0px 5px;
+            cursor: pointer;
         }
     }
 </style>

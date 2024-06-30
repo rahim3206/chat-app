@@ -324,6 +324,9 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                 },
             });
          });
+         $(document).on('click','#backHome',function(){
+            $('#user_chats').css('display','none');
+         });
      </script>
 </body>
 </html>

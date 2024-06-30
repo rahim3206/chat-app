@@ -14,6 +14,7 @@ use App\Models\FriendRequest;
 use App\Models\GroupChat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -35,17 +36,44 @@ class HomeController extends Controller
     public function index()
     {
         $userId = auth()->user()->id;
+        // Get friend relationships
         $friendRelationships = Friend::where(function($query) use ($userId) {
             $query->where('user_id', $userId)
-                  ->orWhere('friend_id', $userId);
+                ->orWhere('friend_id', $userId);
         })->get();
+
+        // Extract friend IDs
         $friendIds = $friendRelationships->map(function($friend) use ($userId) {
             return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
         });
-        $friends = User::whereIn('id',$friendIds)->get();
-        $friend_requests = FriendRequest::with('sender','receiver')->where('receiver_id',$userId)->where('status','pending')->get();
-        return view('home',compact('friends','friend_requests'));
+
+        // Get friends
+        $friends = User::whereIn('id', $friendIds)->get();
+
+        // Get friend requests
+        $friend_requests = FriendRequest::with('sender', 'receiver')
+                                        ->where('receiver_id', $userId)
+                                        ->where('status', 'pending')
+                                        ->get();
+
+        // Get last messages and order friends by the latest message timestamp
+        $friends = User::whereIn('users.id', $friendIds)
+                        ->leftJoin('chats', function($join) use ($userId) {
+                            $join->on('users.id', '=', 'chats.sender_id')
+                                ->orOn('users.id', '=', 'chats.receiver_id');
+                        })
+                        ->where(function($query) use ($userId) {
+                            $query->where('chats.sender_id', $userId)
+                                ->orWhere('chats.receiver_id', $userId);
+                        })
+                        ->select('users.*', DB::raw('MAX(chats.created_at) as last_message_time'))
+                        ->groupBy('users.id')
+                        ->orderBy('last_message_time', 'desc')
+                        ->get();
+
+        return view('home', compact('friends', 'friend_requests'));
     }
+
     public function send_message(Request $request)
     {
         try {

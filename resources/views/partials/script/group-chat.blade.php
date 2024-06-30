@@ -99,6 +99,7 @@
             group_profile = $(this).find('.group_profile').html();
             // console.log(group_profile);
             $('#chats').html('');
+            $('#user_chats').css('display','block');
             group_id = $(this).data('id');
             receiver_id = null;
             $('.friend').removeClass('active');
@@ -107,6 +108,7 @@
             $(this).find('.read').text(0);
             load_group_chats();
             scrollToBottom();
+            $('#message').focus();
         });
         $(document).on('click','.add_member',function(){
             $('#search_member').data('group_id',$(this).data('id'));

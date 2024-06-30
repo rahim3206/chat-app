@@ -43,7 +43,7 @@
                         }
                         $('#chats').html(html);
                         $('#chats').prepend(`<div class="group_info justify-content-start align-items-center">
-                            <a><i class="fa fa-angle-right"></i></a>
+                            <a id="backHome"><i class="fa fa-angle-left"></i></a>
                             <div class="d-flex justify-content-center gap-2">
                                 ${user_profile}
                             </div>
@@ -65,6 +65,7 @@
             $(this).find('.read').text(0);
             load_chats();
             scrollToBottom();
+            $('#message').focus();
             // $('#single_chat').removeClass('d-none');
         });
 
