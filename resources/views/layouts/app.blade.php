@@ -127,12 +127,12 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
         #requestCount{
             background-color: blue;
             color: #fff;
-            padding: 1px 5px;
+            padding: 0px 4px;
             border-radius: 50%;
             font-size: 11px;
             position: absolute;
             top: 4px;
-            right: 0px;
+            right: 5px;
         }
     </style>
 
@@ -165,16 +165,18 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         <li class="nav-item position-relative">
-                            <a href="javascript:void(0)" class="nav-link friendRequest">Friend Request <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
+                            <a href="javascript:void(0)" class="nav-link friendRequest"><i class="fa fa-group"></i> <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
                             <div class="notifications d-none">
-                                <ul class="list-group" id="friendRequestUl">
+                                <ul class="list-group h-100" id="friendRequestUl">
                                     @auth
-                                        @foreach ($friend_requests as $friend_request)
+                                        @forelse($friend_requests as $friend_request)
                                             <li class="list-group-item d-flex justify-content-center align-item-center flex-column" id="friend-request-{{ $friend_request->id }}">
                                                 <div><strong>{{ $friend_request->sender->name }}</strong></div>
                                                 <div><button class="btn btn-info btn-sm text-white acceptFriendRequest" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Accept</button>&nbsp;&nbsp;<button class="btn btn-secondary btn-sm cancelRequestbtn" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Cancel</button></div>
                                             </li>
-                                        @endforeach
+                                        @empty
+                                            <li class="list-group-item text-center m-auto">No Rrequest Found</li>
+                                        @endforelse
                                     @endauth
                                 </ul>
                             </div>
@@ -184,7 +186,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                             <div class="notifications d-none">
                                 <ul class="list-group" id="notificationUl">
                                     @auth
-                                        @foreach ($friend_requests as $friend_request)
+                                        @foreach($friend_requests as $friend_request)
                                             <li class="list-group-item d-flex justify-content-center align-item-center flex-column" id="friend-request-{{ $friend_request->id }}">
                                                 <div><strong>{{ $friend_request->sender->name }}</strong></div>
                                                 <div><button class="btn btn-info btn-sm text-white acceptFriendRequest" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Accept</button>&nbsp;&nbsp;<button class="btn btn-secondary btn-sm cancelRequestbtn" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Cancel</button></div>
@@ -210,6 +212,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <img src="{{ gravatar_url(Auth::user()->email) }}" class="profile_image">
                                     {{ Auth::user()->name }}
                                 </a>
 
@@ -327,6 +330,8 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
          $(document).on('click','#backHome',function(){
             $('#user_chats').css('display','none');
          });
+
+
      </script>
 </body>
 </html>

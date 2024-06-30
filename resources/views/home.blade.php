@@ -154,6 +154,7 @@
     .user_chats{
         border-left: 1px solid #ccced0;
         padding-left: 0px;
+        display: none;
     }
     #main .card{
         background-color: #fff
@@ -205,6 +206,8 @@
     }
     #backHome{
         display: none;
+    }#default_chat_view{
+        border-left: 1px solid #ccced0;
     }
     @media(max-width:800px){
         .user_chats{
@@ -215,7 +218,6 @@
             height: 100svh;
             z-index: 2;
             padding-right: 0px;
-            display: none;
         }
         .messageForm{
             position: absolute;
@@ -280,7 +282,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
+        <div class="col-md-8" id="default_chat_view"></div>
     </div>
     </div>
     

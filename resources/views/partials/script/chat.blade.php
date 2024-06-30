@@ -58,6 +58,7 @@
             user_profile = $(this).find('.user_name_and_pro').html();
             $('#chats').html('');
             $('#user_chats').css('display','block');
+            $('#default_chat_view').addClass('d-none');
             group_id = null;
             receiver_id = $(this).data('id');
             $('.friend').removeClass('active')

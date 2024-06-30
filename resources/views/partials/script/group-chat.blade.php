@@ -100,6 +100,7 @@
             // console.log(group_profile);
             $('#chats').html('');
             $('#user_chats').css('display','block');
+            $('#default_chat_view').addClass('d-none');
             group_id = $(this).data('id');
             receiver_id = null;
             $('.friend').removeClass('active');
