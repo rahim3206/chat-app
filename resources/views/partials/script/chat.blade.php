@@ -4,6 +4,7 @@
 
         var file = null ;
         var edit_chat_id = null;
+        var user_profile = '';
         
         function load_chats(){
             $.ajax({
@@ -41,6 +42,12 @@
 
                         }
                         $('#chats').html(html);
+                        $('#chats').prepend(`<div class="group_info justify-content-start align-items-center">
+                            <a><i class="fa fa-angle-right"></i></a>
+                            <div class="d-flex justify-content-center gap-2">
+                                ${user_profile}
+                            </div>
+                        </div>`);
                         scrollToBottom();
                     }
                 },
@@ -48,7 +55,9 @@
         }
 
         $(document).on('click','.friend',function(){
+            user_profile = $(this).find('.user_name_and_pro').html();
             $('#chats').html('');
+            $('#user_chats').css('display','block');
             group_id = null;
             receiver_id = $(this).data('id');
             $('.friend').removeClass('active')
@@ -108,6 +117,8 @@
                         $(_this).text('Send').attr('disabled',false);
                         scrollToBottom();
                         file = null;
+                        let element = $('#friend_'+receiver_id);
+                        element.prependTo(element.parent());
                     },
                 });
             }else{
@@ -130,6 +141,8 @@
                         scrollToBottom();
                         file = null;
                         edit_chat_id = null;
+                        let element = $('#friend_'+receiver_id);
+                        element.prependTo(element.parent());
                     },
                 });
             }

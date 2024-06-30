@@ -18,6 +18,9 @@
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/emoji-button.min.js"></script>
+    <script src="
+https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
+"></script>
     <script>
         let sender_id = @json(auth()->user()->id ?? null);
         let receiver_id ;
@@ -34,11 +37,21 @@
                 data:{user_id:sender_id},
                 success:function(response){
                     if(response.status == 'success'){
+                        var member_count = 1;
                         response.data.forEach(group => {
                             html += `<li class="list-group-item group" data-id="${group.id}">
-                                        <span>${group.name}</span>`;
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="group_profile">`;
+                                                group.group_members.forEach(member => { 
+                                                    if(member_count < 4){
+                                                        html += `<img src="https://www.gravatar.com/avatar/${md5(member.user.email)}?s=150&d=wavatar" alt="avatar" class="g_pro_${member_count}">`;
+                                                        member_count++;
+                                                    }                                                   
+                                                });
+                            html += `</div>
+                                        <span>${group.name}</span></div>`;
                                     if(group.user_id == sender_id){
-                            html += `<button class="btn btn-info btn-sm text-white add_member" data-id="${group.id}" >Add Member</button>`;
+                            html += `<button class="btn btn-info    btn-sm text-white add_member" data-id="${group.id}" >Add Member</button>`;
                                     }
                             html += `<span class="badge bg-primary read" id="unread_${group.id}">0</span>
                                     </li>`;
@@ -166,6 +179,22 @@
                                 </ul>
                             </div>
                         </li>
+                        <li class="nav-item position-relative">
+                            <a href="javascript:void(0)" class="nav-link notificationBtn"><i class="fa fa-bell"></i> <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
+                            <div class="notifications d-none">
+                                <ul class="list-group" id="notificationUl">
+                                    @auth
+                                        @foreach ($friend_requests as $friend_request)
+                                            <li class="list-group-item d-flex justify-content-center align-item-center flex-column" id="friend-request-{{ $friend_request->id }}">
+                                                <div><strong>{{ $friend_request->sender->name }}</strong></div>
+                                                <div><button class="btn btn-info btn-sm text-white acceptFriendRequest" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Accept</button>&nbsp;&nbsp;<button class="btn btn-secondary btn-sm cancelRequestbtn" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Cancel</button></div>
+                                            </li>
+                                        @endforeach
+                                    @endauth
+                                </ul>
+                            </div>
+                        </li>
+
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -251,9 +280,14 @@
          });
 
          $(document).on('click','.friendRequest',function(){
-            
+            $('.notifications').addClass('d-none');
             $(this).parent().find('.notifications').toggleClass('d-none');
          });
+
+        $(document).on('click','.notificationBtn',function(){
+            $('.notifications').addClass('d-none');
+            $(this).parent().find('.notifications').toggleClass('d-none');
+        });
 
          $(document).on('click','.acceptFriendRequest',function(){
             let id = $(this).data('id');

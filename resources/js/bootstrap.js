@@ -48,6 +48,9 @@ window.Echo.channel('chat-message')
             // if(sender_id == data.data.receiver_id){
             //     showNotification("Hello", "New Message Received");
             // }
+            // console.log(data.data.sender_id);
+            let element = $('#friend_'+data.data.sender_id);
+            element.prependTo(element.parent());
             if(sender_id == data.data.receiver_id && receiver_id == data.data.sender_id){
                 if(data.data.type == 'file'){
                     var html = `<div class="receiver_message" id="chat_${data.data.id}">

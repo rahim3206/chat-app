@@ -17,7 +17,7 @@ class GroupController extends Controller
         $group_ids = GroupMember::where('user_id', $user_id)->pluck('group_id')->toArray();
         $additional_group_ids = Group::where('user_id', $request->user_id)->pluck('id')->toArray();
         $group_ids = array_merge($group_ids, $additional_group_ids);
-        $groups = Group::whereIn('id', $group_ids)->get();
+        $groups = Group::with('group_members.user')->whereIn('id', $group_ids)->get();
         return response()->json(['status'=>'success','data'=> $groups]);
     }
     public function store(Request $request)
@@ -34,6 +34,11 @@ class GroupController extends Controller
             $group->image = $ext;
         }
         $group->save();
+        $member = new GroupMember();
+        $member->user_id = auth()->user()->id;
+        $member->group_id = $group->id;
+        $member->save();
+
         return response()->json(['status'=>'succuss','data'=>$group]);
     }
     public function search_member(Request $request)
@@ -103,7 +108,7 @@ class GroupController extends Controller
         $chat->user_id = $request->user_id;
         $chat->group_id = $request->group_id;
         $chat->read_ = false;
-        $chat->message = auth()->user()->name.'Kicked '.$member->name.' out of the group.';
+        $chat->message = auth()->user()->name.' Kicked '.$member->name.' out of the group.';
         $chat->type = 'alert';
         $chat->save();
         $sender =auth()->user();

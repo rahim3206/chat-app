@@ -40,6 +40,7 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        '18cd25984de78aebc760e5658c914069' => __DIR__ . '/../..' . '/app/Helper/app.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -184,6 +185,7 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         'C' => 
         array (
             'Cron\\' => 5,
+            'Creativeorange\\Gravatar\\' => 24,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
@@ -592,6 +594,10 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         array (
             0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
         ),
+        'Creativeorange\\Gravatar\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/creativeorange/gravatar/src',
+        ),
         'Carbon\\Doctrine\\' => 
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
@@ -618,6 +624,8 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Events\\Delete' => __DIR__ . '/../..' . '/app/Events/Delete.php',
+        'App\\Events\\FriendRequestSent' => __DIR__ . '/../..' . '/app/Events/FriendRequestSent.php',
+        'App\\Events\\GroupMessage' => __DIR__ . '/../..' . '/app/Events/GroupMessage.php',
         'App\\Events\\Message' => __DIR__ . '/../..' . '/app/Events/Message.php',
         'App\\Events\\Status' => __DIR__ . '/../..' . '/app/Events/Status.php',
         'App\\Events\\Unread' => __DIR__ . '/../..' . '/app/Events/Unread.php',
@@ -630,6 +638,7 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\GroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/GroupController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -642,6 +651,12 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Models\\Chat' => __DIR__ . '/../..' . '/app/Models/Chat.php',
+        'App\\Models\\Friend' => __DIR__ . '/../..' . '/app/Models/Friend.php',
+        'App\\Models\\FriendRequest' => __DIR__ . '/../..' . '/app/Models/FriendRequest.php',
+        'App\\Models\\Group' => __DIR__ . '/../..' . '/app/Models/Group.php',
+        'App\\Models\\GroupChat' => __DIR__ . '/../..' . '/app/Models/GroupChat.php',
+        'App\\Models\\GroupMember' => __DIR__ . '/../..' . '/app/Models/GroupMember.php',
+        'App\\Models\\Notification' => __DIR__ . '/../..' . '/app/Models/Notification.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -803,6 +818,10 @@ class ComposerStaticInit6e0093448dda6c793b99ae318144aad3
         'Carbon\\TranslatorImmutable' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/TranslatorImmutable.php',
         'Carbon\\TranslatorStrongTypeInterface' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/TranslatorStrongTypeInterface.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Creativeorange\\Gravatar\\Exceptions\\InvalidEmailException' => __DIR__ . '/..' . '/creativeorange/gravatar/src/Exceptions/InvalidEmailException.php',
+        'Creativeorange\\Gravatar\\Facades\\Gravatar' => __DIR__ . '/..' . '/creativeorange/gravatar/src/Facades/Gravatar.php',
+        'Creativeorange\\Gravatar\\Gravatar' => __DIR__ . '/..' . '/creativeorange/gravatar/src/Gravatar.php',
+        'Creativeorange\\Gravatar\\GravatarServiceProvider' => __DIR__ . '/..' . '/creativeorange/gravatar/src/GravatarServiceProvider.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/CronExpression.php',
         'Cron\\DayOfMonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/DayOfMonthField.php',

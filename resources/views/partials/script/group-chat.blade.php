@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function(){
-
+        var group_profile = '';
         
         function load_group_chats(){
             $.ajax({
@@ -46,8 +46,11 @@
                         }
                         $('#chats').html(html);
                         $('#chats').prepend(`<div class="group_info">
-                            <div class="">
-                                <h4 id="group_name">${response.group_info.name}</h4>
+                            <div class="d-flex justify-content-center gap-2">
+                                <div class="group_profile">
+                                ${group_profile}
+                                </div>
+                                <h4 id="group_name" class="m-0">${response.group_info.name}</h4>
                             </div>
                             <div class="position-relative">
                                 <div class="group_ul d-none">
@@ -93,6 +96,8 @@
             $(document).find('.group_ul').toggleClass('d-none');
         });
         $(document).on('click','.group',function(){
+            group_profile = $(this).find('.group_profile').html();
+            // console.log(group_profile);
             $('#chats').html('');
             group_id = $(this).data('id');
             receiver_id = null;
@@ -152,10 +157,13 @@
                 data:{group_id},
                 success:function(response){
                     var html = "";
-                    html += `<li class="list-group-item">${response.group_admin.name} (Admin)</li>`;
                     response.data.forEach(member => {
-                        html += `<li class="list-group-item d-flex justify-content-between">${member.user.name}  `;
-                            if(sender_id == response.group.user_id){
+                        var admin = '';
+                        if( sender_id == member.user.id){
+                            admin = '(Admin)'
+                        }
+                        html += `<li class="list-group-item d-flex justify-content-between">${member.user.name+' '+admin}  `;
+                            if(sender_id == response.group.user_id && sender_id != member.user.id){
                                 html += `<a class="text-danger kick_member" data-id="${member.user.id}" data-group_id="${response.group.id}" href="javascript:void(0)"> Kick</a>`;
                             }
                         html += `</li>`;

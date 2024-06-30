@@ -42,9 +42,9 @@ class HomeController extends Controller
         $friendIds = $friendRelationships->map(function($friend) use ($userId) {
             return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
         });
-        $users = User::whereIn('id',$friendIds)->get();
+        $friends = User::whereIn('id',$friendIds)->get();
         $friend_requests = FriendRequest::with('sender','receiver')->where('receiver_id',$userId)->where('status','pending')->get();
-        return view('home',compact('users','friend_requests'));
+        return view('home',compact('friends','friend_requests'));
     }
     public function send_message(Request $request)
     {

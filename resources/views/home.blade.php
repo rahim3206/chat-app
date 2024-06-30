@@ -8,26 +8,35 @@
         margin-bottom: 5px;
         align-items: center;
         position: relative;
+        margin-right: 12px;
+        margin-left: 12px;
     }
     .receiver_message{
         margin-bottom: 5px;
         position: relative;
+        margin-right: 12px;
+        margin-left: 12px;
+    }
+    #chats .sender_message:nth-child(1){
+        margin-top: 10px;
     }
     .sender_message p,
     .receiver_message p
     {
-        margin: 0px;
+        margin-bottom: 0px;
         background-color: rgb(236, 235, 235);
         padding: 4px 8px;
         border-radius: 5px;
         width: fit-content;
         max-width: 50%;
     }
+
     #chats{
         margin-bottom: 10px;
         height: 70svh;
         overflow-y: scroll;
         overflow-x: hidden;
+        /* padding: 0px 15px 15px 15px; */
         position: relative;
     }
     #chats::-webkit-scrollbar  {
@@ -55,7 +64,8 @@
     }
     .messageForm{
         display: flex;
-        gap: 10px
+        gap: 10px;
+        padding: 12px;
     }
     #emojiButton,#imageButton{
         border: none;
@@ -124,6 +134,7 @@
         position: sticky;
         top: 0px;
         z-index: 3;
+        padding: 10px;
         background: #f8fafc;
     }
     .group_setting{
@@ -139,28 +150,100 @@
     .group_ul ul li{
         cursor: pointer;
     }
+    
+    .user_chats{
+        border-left: 1px solid #ccced0;
+        padding-left: 0px;
+    }
+    #main .card{
+        background-color: #fff
+    }
+    .profile_image{
+        widows: 40px;
+        height: 40px;
+        border-radius: 50%
+    }
+    .friend.active,
+    .group.active
+    {
+        background-color: rgb(236, 236, 236);
+        color: #000
+    }
+    .group_profile{
+        position: relative;
+        width: 40px;
+        height: 40px;
+    }
+    .g_pro_1,
+    .g_pro_2,
+    .g_pro_3{
+        width: 25px !important;
+        height: 25px;
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid white;
+    }
+    .g_pro_1{
+        top: 0px;
+        left: 0px;
+    }
+    .g_pro_2{
+        top: 5px;
+        right: 0px;
+    }
+    .g_pro_3{
+        bottom: 0px;
+        left: 5px;
+    }
+    .userList,.groupList{
+        height: 50%;
+        overflow: hidden;
+    }
+    .userListUl{
+        overflow-y: scroll;
+        height: 82%;
+    }
+    @media(max-width:425px){
+        .user_chats{
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            background-color: #fff;
+            height: 100svh;
+            z-index: 2;
+            padding-right: 0px;
+            display: none;
+        }
+        .messageForm{
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+        }
+    }
 </style>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">{{ __('Users') }}</div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        @foreach ($users as $user)
+<div class="container " id="main">
+    <div class="card">
+        <div class="row justify-content-center">
+        <div class="col-md-4 pr-0">
+                <div class="card-body userList">
+                    <input type="text" name="" class="form-control" placeholder="Search Friends">
+                    <ul class="list-group mt-2 userListUl">
+                        @foreach ($friends as $user)
                             @php
                                 $unread_chats = \App\Models\Chat::where('receiver_id', Auth::user()->id)->where('sender_id', $user->id)->where('read_', 0)->count();
                             @endphp
-                             <li class="list-group-item friend" data-id="{{ $user->id }}">
-                                <span>{{ $user->name }} <span class="status offline" id="status_{{ $user->id }}"></span></span>
+                             <li class="list-group-item friend" data-id="{{ $user->id }}" id="friend_{{ $user->id }}">
+                                <div class="user_name_and_pro">
+                                    <img src="{{ gravatar_url($user->email) }}" class="profile_image" alt="">
+                                    <span>{{ $user->name }} <span class="status offline" id="status_{{ $user->id }}"></span></span>
+                                </div>
                                 <span class="badge bg-primary read" id="unread_{{ $user->id }}">{{ $unread_chats }}</span>
                             </li>
                         @endforeach
                     </ul>
                 </div>
-            </div>
-            <div class="card mt-5">
-                <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="groupList">
+            <div class="card-header d-flex justify-content-between align-items-center">
                     <p class="m-0">{{ __('Groups') }}</p>
 
                     <button class="btn btn-info btn-sm text-white"  data-bs-toggle="modal" data-bs-target="#createGroupModal">Create</button>
@@ -170,13 +253,12 @@
                         
                     </ul>
                 </div>
-            </div>
         </div>
-        <div class="col-md-8">
-            <div class="card" id="single_chat">
-                <div class="card-header">{{ __('Chats') }}</div>
-
-                <div class="card-body">
+                
+        </div>
+        <div class="col-md-8 user_chats" id="user_chats">
+            <div class=" " id="single_chat">
+                <div class="card-body p-0">
                     <div id="chats">
                         
                     </div>
@@ -191,6 +273,8 @@
             </div>
         </div>
     </div>
+    </div>
+    
 </div>
 
 <div id="confirmFileModal" class="d-none">
@@ -263,7 +347,6 @@
         </div>
     </div>
 </div>
-
 @section('js')
 @include('partials.script.chat')
 @include('partials.script.group-chat')
