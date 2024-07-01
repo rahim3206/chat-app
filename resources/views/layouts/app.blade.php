@@ -115,7 +115,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             background-color: #fff;
             border: 1px solid grey;
             border-radius: 10px;
-            z-index: 2;
+            z-index: 4;
             max-height: 320px;
             height: 320px;
             overflow-y: scroll;
@@ -124,8 +124,8 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             position: relative;
             padding-right: 20px !important
         }
-        #requestCount{
-            background-color: blue;
+        #requestCount,#notificationCount{
+            background-color: red;
             color: #fff;
             padding: 0px 4px;
             border-radius: 50%;
@@ -133,6 +133,29 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             position: absolute;
             top: 4px;
             right: 5px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+            }
+        }
+        #notificationUl li{
+            cursor: pointer;
+        }
+        #notificationUl li.unread{
+            background-color: #d2d2d2
+        }
+        #notificationUl li:hover{
+            background-color: #f3f3f3
+        }
+        .time{
+            color: grey;
+            font-size: 11px;
+            margin-left: 5px
         }
     </style>
 
@@ -166,7 +189,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                         <!-- Authentication Links -->
                         <li class="nav-item position-relative">
                             <a href="javascript:void(0)" class="nav-link friendRequest"><i class="fa fa-group"></i> <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
-                            <div class="notifications d-none">
+                            <div class="notifications d-none" id="friendRequest">
                                 <ul class="list-group h-100" id="friendRequestUl">
                                     @auth
                                         @forelse($friend_requests as $friend_request)
@@ -182,14 +205,17 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                             </div>
                         </li>
                         <li class="nav-item position-relative">
-                            <a href="javascript:void(0)" class="nav-link notificationBtn"><i class="fa fa-bell"></i> <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
-                            <div class="notifications d-none">
+                            <a href="javascript:void(0)" class="nav-link notificationBtn"><i class="fa fa-bell"></i> <span id="notificationCount">{{ count($unread_notifications ?? [] ) }}</span></a>
+                            <div class="notifications d-none" style="right: 0">
                                 <ul class="list-group" id="notificationUl">
                                     @auth
-                                        @foreach($friend_requests as $friend_request)
-                                            <li class="list-group-item d-flex justify-content-center align-item-center flex-column" id="friend-request-{{ $friend_request->id }}">
-                                                <div><strong>{{ $friend_request->sender->name }}</strong></div>
-                                                <div><button class="btn btn-info btn-sm text-white acceptFriendRequest" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Accept</button>&nbsp;&nbsp;<button class="btn btn-secondary btn-sm cancelRequestbtn" data-id="{{ $friend_request->id }}" data-sender-id="{{$friend_request->sender->id}}">Cancel</button></div>
+                                        @foreach($notifications as $notification)
+                                            <li class="list-group-item notification_item {{ $notification->status == 0 ? 'unread' : '' }} d-flex justify-content-start gap-2 align-item-center" id="notification-{{ $notification->id }}" data-id="{{ $notification->id }}">
+                                                <div><img src="{{ gravatar_url($notification->user->email) }}" alt="" class="profile_image"></div>
+                                                <div>
+                                                    <strong>{{ $notification->user->name }}</strong><span class="time">{{timeElapsedString($notification->created_at)}}</span>
+                                                    <p class="m-0">{{ $notification->message }}</p>
+                                                </div>
                                             </li>
                                         @endforeach
                                     @endauth
@@ -330,6 +356,32 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
          $(document).on('click','#backHome',function(){
             $('#user_chats').css('display','none');
          });
+
+         $(document).ready(function () {
+            var elements = $('#suggestedUser');
+            
+            $(document).click(function (event) {
+                if (!elements.is(event.target) && elements.has(event.target).length === 0) {
+                    elements.addClass('d-none');
+                }
+            });
+
+            $(document).on('click','.notification_item',function(){
+                var _this = $(this);
+                if($(this).hasClass('unread')){
+                    $.ajax({
+                        url:"{{ route('read-notification') }}",
+                        type:"POST",
+                        data:{id:$(this).data('id'),'_token':"{{csrf_token()}}"},
+                        success:function(response){
+                            if(response.status == 'success'){
+                                _this.removeClass('unread');
+                            }
+                        }
+                    });
+                }
+            });
+        });
 
 
      </script>

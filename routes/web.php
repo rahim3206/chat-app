@@ -44,3 +44,6 @@ Route::post('send-request',[HomeController::class,'send_request'])->name('send-r
 Route::get('accept-friend-request',[HomeController::class,'accept_request'])->name('accept.friend.request');
 Route::get('cancel-friend-request',[HomeController::class,'cancel_request'])->name('cancel.friend.request');
 
+// Notification
+Route::post('read-notification',[HomeController::class,'read_notification'])->name('read-notification');
+Route::post('delete-notification',[HomeController::class,'delete_notification'])->name('delete-notification');

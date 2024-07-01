@@ -243,7 +243,7 @@
                             @php
                                 $unread_chats = \App\Models\Chat::where('receiver_id', Auth::user()->id)->where('sender_id', $user->id)->where('read_', 0)->count();
                             @endphp
-                             <li class="list-group-item friend" data-id="{{ $user->id }}" id="friend_{{ $user->id }}">
+                             <li class="list-group-item friend " data-id="{{ $user->id }}" id="friend_{{ $user->id }}">
                                 <div class="user_name_and_pro">
                                     <img src="{{ gravatar_url($user->email) }}" class="profile_image" alt="">
                                     <span>{{ $user->name }} <span class="status offline" id="status_{{ $user->id }}"></span></span>

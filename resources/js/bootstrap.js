@@ -141,3 +141,30 @@ window.Echo.private(`send-friend-request.${sender_id}`)
     $('#friendRequestUl').prepend(html);
     $('#requestCount').text(Number($('#requestCount').text()) + 1);
 });
+
+
+window.Echo.channel(`message-notification.${sender_id}`)
+.listen('Notifications',(data) => {
+    // console.log(data);
+    if(data.data.sender_id == receiver_id){
+        $.ajax({
+            url:"/delete-notification",
+            type:"POST",
+            data:{id:data.data.id,'_token':$('meta[name="csrf-token"]').attr('content')},
+            success:function(response){
+                
+            }
+        });
+    }else{
+        var html = `<li class="list-group-item unread d-flex justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }">
+                        <div><img src="https://www.gravatar.com/avatar/${md5(data.sender.email)}?s=150&d=wavatar" alt="" class="profile_image"></div>
+                        <div>
+                            <strong>${ data.sender.name }</strong><pan class="time">Just now</span>
+                            <p class="m-0">${ data.data.message }</p>
+                        </div>
+                    </li>`;
+        $('#notificationUl').prepend(html);
+        $('#notificationCount').text(Number($('#notificationCount').text()) + 1);
+        showNotification(data.sender.name,data.data.message);
+    }
+});

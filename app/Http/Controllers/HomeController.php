@@ -6,12 +6,14 @@ use App\Events\Delete;
 use App\Events\FriendRequestSent;
 use App\Events\GroupMessage;
 use App\Events\Message;
+use App\Events\Notifications;
 use App\Events\Unread;
 use App\Events\Update;
 use App\Models\Chat;
 use App\Models\Friend;
 use App\Models\FriendRequest;
 use App\Models\GroupChat;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +38,10 @@ class HomeController extends Controller
     public function index()
     {
         $userId = auth()->user()->id;
+
+        $notifications = Notification::with('user')->where('receiver_id',$userId)->latest()->take(20)->get();
+        $unread_notifications = Notification::with('user')->where('receiver_id',$userId)->where('status',0)->get();
+
         // Get friend relationships
         $friendRelationships = Friend::where(function($query) use ($userId) {
             $query->where('user_id', $userId)
@@ -71,7 +77,7 @@ class HomeController extends Controller
                         ->orderBy('last_message_time', 'desc')
                         ->get();
 
-        return view('home', compact('friends', 'friend_requests'));
+        return view('home', compact('friends', 'friend_requests','notifications','unread_notifications'));
     }
 
     public function send_message(Request $request)
@@ -124,6 +130,16 @@ class HomeController extends Controller
                 $sender = User::find($request->sender_id);
                 event(new GroupMessage($chat,$sender));
             }
+            $notification = new Notification();
+            $notification->sender_id = $request->sender_id;
+            $notification->receiver_id = $request->receiver_id;
+            $notification->message = "Sent you a message.";
+            $notification->url = null;
+            $notification->status = 0;
+            $notification->save();
+
+            event(new Notifications($notification,auth()->user()));
+
             return response()->json(['status'=>'success','data'=>$chat]);
 
         } catch (\Exception $th) {
@@ -266,5 +282,16 @@ class HomeController extends Controller
         $friend_request->delete();
         return response()->json(['status'=>'success']);
 
+    }
+    public function read_notification(Request $request){
+        $notification = Notification::find($request->id);
+        $notification->status = 1;
+        $notification->update();
+        return response()->json(['status'=>'success']);
+    }
+    public function delete_notification(Request $request){
+        $notification = Notification::find($request->id);
+        $notification->delete();
+        return response()->json(['status'=>'success']);
     }
 }
