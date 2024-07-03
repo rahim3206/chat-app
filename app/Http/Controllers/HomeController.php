@@ -12,7 +12,9 @@ use App\Events\Update;
 use App\Models\Chat;
 use App\Models\Friend;
 use App\Models\FriendRequest;
+use App\Models\Group;
 use App\Models\GroupChat;
+use App\Models\GroupMember;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -39,7 +41,9 @@ class HomeController extends Controller
     {
         $userId = auth()->user()->id;
 
-        $notifications = Notification::with('user')->where('receiver_id',$userId)->latest()->take(20)->get();
+        $join_groups_ids = GroupMember::where('user_id',$userId)->pluck('group_id');
+
+        $notifications = Notification::with('user')->where('receiver_id',$userId)->orwhereIn('group_id',$join_groups_ids)->where('sender_id','!=',$userId)->latest()->take(20)->get();
         $unread_notifications = Notification::with('user')->where('receiver_id',$userId)->where('status',0)->get();
 
         // Get friend relationships
@@ -125,15 +129,19 @@ class HomeController extends Controller
                     ->orwhere('receiver_id',$request->receiver_id);
                 })->where('read_','0')->get();
                 event(new Unread($unread_chats));
+                $message = 'Sent you a message.';
 
             }else if($request->group_id != null){
+                $find_group = Group::find($request->group_id);
                 $sender = User::find($request->sender_id);
                 event(new GroupMessage($chat,$sender));
+                $message = "Sent message in ".$find_group->name.'.';
             }
             $notification = new Notification();
             $notification->sender_id = $request->sender_id;
-            $notification->receiver_id = $request->receiver_id;
-            $notification->message = "Sent you a message.";
+            $notification->receiver_id = $request->receiver_id ?? null;
+            $notification->group_id = $request->group_id ?? null;
+            $notification->message = $message;
             $notification->url = null;
             $notification->status = 0;
             $notification->save();
@@ -256,6 +264,17 @@ class HomeController extends Controller
         $friend_request->save();
         $receiver = User::find($request->user_id);
         event(new FriendRequestSent($friend_request,auth()->user(),$receiver));
+
+        $notification = new Notification();
+        $notification->sender_id = $request->sender_id;
+        $notification->receiver_id = $request->user_id ?? null;
+        $notification->group_id = $request->group_id ?? null;
+        $notification->message = "Send you a friend request.";
+        $notification->url = null;
+        $notification->status = 0;
+        $notification->save();
+
+        event(new Notifications($notification,auth()->user()));
         return response()->json(['status'=>'success']);
     }
 
@@ -272,6 +291,19 @@ class HomeController extends Controller
         $friend->user_id = $request->sender_id;
         $friend->friend_id = auth()->user()->id;
         $friend->save();
+
+        
+        $notification = new Notification();
+        $notification->sender_id = auth()->user()->id;
+        $notification->receiver_id = $request->sender_id ?? null;
+        $notification->group_id = $request->group_id ?? null;
+        $notification->message = "Accept your friend request.";
+        $notification->url = null;
+        $notification->status = 0;
+        $notification->save();
+        dd($notification);
+
+        event(new Notifications($notification,auth()->user()));
 
         return response()->json(['status'=>'success']);
 

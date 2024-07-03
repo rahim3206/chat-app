@@ -45,7 +45,7 @@
 
                         }
                         $('#chats').html(html);
-                        $('#chats').prepend(`<div class="group_info">
+                        var group_html = `<div class="group_info">
                             <div class="d-flex justify-content-center gap-2">
                                 <div class="group_profile">
                                 ${group_profile}
@@ -55,13 +55,17 @@
                             <div class="position-relative">
                                 <div class="group_ul d-none">
                                     <ul class="list-group">
-                                        <li class="list-group-item" id="see_members"><i class="fa fa-users"></i> Members</li>
-                                        <li class="list-group-item text-danger" id="leave_group"><i class="fa fa-sign-out"></i> Leave Group</li>
+                                        <li class="list-group-item" id="see_members"><i class="fa fa-users"></i> Members</li>`;
+                                        if(response.group_info.user_id == sender_id){
+                                            group_html += `<li class="list-group-item add_member" data-id="${response.group_info.id}" ><i class="fa fa-plus"></i> Add Member</li>`;
+                                        }
+                                        group_html += `<li class="list-group-item text-danger" id="leave_group"><i class="fa fa-sign-out"></i> Leave Group</li>
                                     </ul>
                                 </div>
                                 <i class="fa fa-ellipsis-v group_setting" id="group_setting"></i>
                             </div>
-                        </div>`);
+                        </div>`;
+                        $('#chats').prepend(group_html);
                         scrollToBottom();
                     }
                 },
@@ -110,6 +114,7 @@
             load_group_chats();
             scrollToBottom();
             $('#message').focus();
+            // console.log(group_id);
         });
         $(document).on('click','.add_member',function(){
             $('#search_member').data('group_id',$(this).data('id'));

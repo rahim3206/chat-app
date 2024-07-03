@@ -25,6 +25,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
         let sender_id = @json(auth()->user()->id ?? null);
         let receiver_id ;
         let group_id ;
+        let group_ids = @json(\App\Models\GroupMember::where('user_id',auth()->user()->id )->pluck('group_id') ?? []);
         function scrollToBottom() {
             var scrollableDiv = document.getElementById('chats');
             scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
@@ -39,20 +40,22 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                     if(response.status == 'success'){
                         var member_count = 1;
                         response.data.forEach(group => {
+                            group_ = group.group_id;
                             html += `<li class="list-group-item group" data-id="${group.id}">
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="group_profile">`;
-                                                group.group_members.forEach(member => { 
-                                                    if(member_count < 4){
-                                                        html += `<img src="https://www.gravatar.com/avatar/${md5(member.user.email)}?s=150&d=wavatar" alt="avatar" class="g_pro_${member_count}">`;
+                                                group.group_members.forEach((member, index) => {
+                                                    index++;
+                                                    if (index < 4) {
+                                                        const avatarUrl = `https://www.gravatar.com/avatar/${md5(member.user.email)}?s=150&d=wavatar`;
+                                                        html += `<img src="${avatarUrl}" alt="avatar" class="g_pro_${index}">`;
                                                         member_count++;
-                                                    }                                                   
+                                                    }
                                                 });
+
                             html += `</div>
                                         <span>${group.name}</span></div>`;
-                                    if(group.user_id == sender_id){
-                            html += `<button class="btn btn-info    btn-sm text-white add_member" data-id="${group.id}" >Add Member</button>`;
-                                    }
+                                    
                             html += `<span class="badge bg-primary read" id="unread_${group.id}">0</span>
                                     </li>`;
                         });

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('sender_id');
             $table->bigInteger('receiver_id');
+            $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->text('message');
             $table->text('url');
             $table->integer('status');

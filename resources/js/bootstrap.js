@@ -143,28 +143,33 @@ window.Echo.private(`send-friend-request.${sender_id}`)
 });
 
 
-window.Echo.channel(`message-notification.${sender_id}`)
+window.Echo.channel(`message-notification`)
 .listen('Notifications',(data) => {
-    // console.log(data);
-    if(data.data.sender_id == receiver_id){
+    if ((data.data.sender_id == receiver_id ||  data.data.group_id == group_id ) && data.data.sender_id != sender_id) {
+        console.log(data);
         $.ajax({
-            url:"/delete-notification",
-            type:"POST",
-            data:{id:data.data.id,'_token':$('meta[name="csrf-token"]').attr('content')},
-            success:function(response){
-                
+            url: "/delete-notification",
+            type: "POST",
+            data: { id: data.data.id, '_token': $('meta[name="csrf-token"]').attr('content') },
+            success: function(response) {
+                // Handle the response if needed
             }
         });
-    }else{
-        var html = `<li class="list-group-item unread d-flex justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }">
-                        <div><img src="https://www.gravatar.com/avatar/${md5(data.sender.email)}?s=150&d=wavatar" alt="" class="profile_image"></div>
-                        <div>
-                            <strong>${ data.sender.name }</strong><pan class="time">Just now</span>
-                            <p class="m-0">${ data.data.message }</p>
-                        </div>
-                    </li>`;
-        $('#notificationUl').prepend(html);
-        $('#notificationCount').text(Number($('#notificationCount').text()) + 1);
-        showNotification(data.sender.name,data.data.message);
+    } else {
+        // Check if the received notification should be added to the notification list
+        if (group_ids.includes(data.data.group_id) && data.data.sender_id != sender_id || data.data.receiver_id == sender_id) {
+        
+            var html = `<li class="list-group-item unread d-flex justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }">
+                            <div><img src="https://www.gravatar.com/avatar/${md5(data.sender.email)}?s=150&d=wavatar" alt="" class="profile_image"></div>
+                            <div>
+                                <strong>${ data.sender.name }</strong><span class="time">Just now</span>
+                                <p class="m-0">${ data.data.message }</p>
+                            </div>
+                        </li>`;
+            $('#notificationUl').prepend(html);
+            $('#notificationCount').text(Number($('#notificationCount').text()) + 1);
+            showNotification(data.sender.name,data.data.message);
+        
     }
+}
 });
