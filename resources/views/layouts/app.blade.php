@@ -312,12 +312,12 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
          });
 
          $(document).on('click','.friendRequest',function(){
-            $('.notifications').addClass('d-none');
+            $('#notificationUl').parent().addClass('d-none');
             $(this).parent().find('.notifications').toggleClass('d-none');
          });
 
         $(document).on('click','.notificationBtn',function(){
-            $('.notifications').addClass('d-none');
+            $('#friendRequest').addClass('d-none');
             $(this).parent().find('.notifications').toggleClass('d-none');
         });
 
@@ -362,11 +362,15 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
 
          $(document).ready(function () {
             var elements = $('#suggestedUser');
+            // var elem2 = $('#friendRequest');
             
             $(document).click(function (event) {
                 if (!elements.is(event.target) && elements.has(event.target).length === 0) {
                     elements.addClass('d-none');
                 }
+                // if (!elem2.is(event.target) && elem2.has(event.target).length === 0) {
+                //     elem2.addClass('d-none');
+                // }
             });
 
             $(document).on('click','.notification_item',function(){
