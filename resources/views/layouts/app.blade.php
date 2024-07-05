@@ -25,7 +25,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
         let sender_id = @json(auth()->user()->id ?? null);
         let receiver_id ;
         let group_id ;
-        let group_ids = @json(\App\Models\GroupMember::where('user_id',auth()->user()->id )->pluck('group_id') ?? []);
+        let group_ids = @auth @json(\App\Models\GroupMember::where('user_id',auth()->user()->id )->pluck('group_id') ?? []); @endauth
         function scrollToBottom() {
             var scrollableDiv = document.getElementById('chats');
             scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
@@ -379,6 +379,7 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
                         success:function(response){
                             if(response.status == 'success'){
                                 _this.removeClass('unread');
+                                $('#notificationCount').text(Number($('#notificationCount').text()) - 1);
                             }
                         }
                     });

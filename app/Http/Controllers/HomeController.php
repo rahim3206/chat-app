@@ -44,8 +44,17 @@ class HomeController extends Controller
         $join_groups_ids = GroupMember::where('user_id',$userId)->pluck('group_id');
 
         $notifications = Notification::with('user')->where('receiver_id',$userId)->orwhereIn('group_id',$join_groups_ids)->where('sender_id','!=',$userId)->latest()->take(20)->get();
-        $unread_notifications = Notification::with('user')->where('receiver_id',$userId)->where('status',0)->get();
-
+        $unread_notifications = Notification::with('user')
+        ->where(function($query) use ($userId, $join_groups_ids) {
+            $query->where('receiver_id', $userId)
+            ->orWhere(function($query) use ($join_groups_ids, $userId) {
+                $query->whereIn('group_id', $join_groups_ids)
+                ->where('sender_id', '!=', $userId);
+            });
+        })
+        ->where('status', 0)
+        ->get();
+    
         // Get friend relationships
         $friendRelationships = Friend::where(function($query) use ($userId) {
             $query->where('user_id', $userId)
@@ -301,7 +310,6 @@ class HomeController extends Controller
         $notification->url = null;
         $notification->status = 0;
         $notification->save();
-        dd($notification);
 
         event(new Notifications($notification,auth()->user()));
 
@@ -312,6 +320,18 @@ class HomeController extends Controller
     {
         $friend_request = FriendRequest::find($request->id);
         $friend_request->delete();
+
+        
+        $notification = new Notification();
+        $notification->sender_id = $friend_request->receiver_id;
+        $notification->receiver_id = $friend_request->sender_id ?? null;
+        $notification->group_id = $request->group_id ?? null;
+        $notification->message = "Reject your friend request.";
+        $notification->url = null;
+        $notification->status = 0;
+        $notification->save();
+
+        event(new Notifications($notification,auth()->user()));
         return response()->json(['status'=>'success']);
 
     }
