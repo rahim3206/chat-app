@@ -15,11 +15,16 @@
                     if(response.status == 'success'){
                         var html = '';
                         var addClass = '';
+                        var lastSeenMessageId = null;
                         for (let i = 0; i < response.data.length; i++) {
                             if(response.data[i].sender_id == sender_id){
                                 addClass = 'sender_message';
                             }else{
                                 addClass = 'receiver_message';
+                            }
+
+                            if(response.data[i].last_seen_message_id){
+                                lastSeenMessageId = response.data[i].last_seen_message_id;
                             }
                             if(response.data[i].type == 'file'){
                                 html += `<div class="${addClass}" id="chat_${response.data[i].id}">`;
@@ -48,6 +53,7 @@
                                 ${user_profile}
                             </div>
                         </div>`);
+                        $(`#chat_${response.last_seen_id}`).prepend(`<div class="seen_indicator"><img src="https://www.gravatar.com/avatar/${md5(response.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
                         scrollToBottom();
                     }
                 },

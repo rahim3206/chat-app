@@ -6,6 +6,7 @@ use App\Events\Delete;
 use App\Events\FriendRequestSent;
 use App\Events\GroupMessage;
 use App\Events\Message;
+use App\Events\MessageSeenEvent;
 use App\Events\Notifications;
 use App\Events\Unread;
 use App\Events\Update;
@@ -15,6 +16,7 @@ use App\Models\FriendRequest;
 use App\Models\Group;
 use App\Models\GroupChat;
 use App\Models\GroupMember;
+use App\Models\MessageSeen;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -128,6 +130,7 @@ class HomeController extends Controller
 
             $chat->save();
             if($request->receiver_id != null){
+                $sender_message_seen = MessageSeen::where('sender_id',$request->sender_id)->where('receiver_id',$request->receiver_id)->first();
                 event(new Message($chat));
 
                 $unread_chats = Chat::where(function($query) use($request){
@@ -157,6 +160,8 @@ class HomeController extends Controller
 
             event(new Notifications($notification,auth()->user()));
 
+
+
             return response()->json(['status'=>'success','data'=>$chat]);
 
         } catch (\Exception $th) {
@@ -165,7 +170,7 @@ class HomeController extends Controller
     }
     public function load_chats(Request $request)
     {
-        try {
+        // try {
             $chats = Chat::where(function($query) use($request){
                 $query->where('sender_id',$request->sender_id)
                 ->orwhere('sender_id',$request->receiver_id);
@@ -176,14 +181,33 @@ class HomeController extends Controller
 
             Chat::where('sender_id', $request->receiver_id)
             ->where('receiver_id', $request->sender_id)
-            ->where('read_', false)
             ->update(['read_' => true]);
 
-            return response()->json(['status'=>'success','data'=>$chats]);
+            $sender_message_seen = MessageSeen::where('sender_id',$request->sender_id)->where('receiver_id',$request->receiver_id)->first();
+            $receiver_message_seen = MessageSeen::where('receiver_id',$request->sender_id)->where('sender_id',$request->receiver_id)->first();
+            //dd($message_seen);
+            $last_seen_id = $sender_message_seen->message_id ?? 0;
+            if($receiver_message_seen == null){
+                $seen = new MessageSeen();
+                $seen->sender_id = $request->receiver_id;
+                $seen->receiver_id = $request->sender_id;
+                $seen->message_id = $chats->last()->id;
+                $seen->save();
+                $receiver_message_seen = $seen;
+            }else{
+                $receiver_message_seen->message_id = $chats->last()->id;
+                $receiver_message_seen->update();
 
-        } catch (\Throwable $th) {
-            return response()->json(['status'=>'error','data'=>$th]);
-        }
+            }
+            $receiver = User::find($request->receiver_id);
+            event(new MessageSeenEvent($receiver_message_seen,$receiver->email));
+
+            return response()->json(['status'=>'success','data'=>$chats,'last_seen_id'=>$last_seen_id,'receiver_email'=>$receiver->email]);
+
+        // } 
+        // catch (\Exception $th) {
+        //     return response()->json(['status'=>'error','data'=>$th]);
+        // }
     }
     public function delete_chat(Request $request){
         try {
@@ -345,5 +369,13 @@ class HomeController extends Controller
         $notification = Notification::find($request->id);
         $notification->delete();
         return response()->json(['status'=>'success']);
+    }
+    public function seen_message(Request $request)
+    {
+        $receiver_message_seen = MessageSeen::where('receiver_id',$request->sender_id)->where('sender_id',$request->receiver_id)->first();
+        $receiver_message_seen->message_id = $request->message_id;
+        $receiver_message_seen->update();
+        event(new MessageSeenEvent($receiver_message_seen,auth()->user()->email));
+        return response()->json(['status','success']);
     }
 }

@@ -65,7 +65,14 @@ window.Echo.channel('chat-message')
                                 </div>`;
                 }
                 $('#chats').append(html);
+                $.ajax({
+                    url:"/seen_message",
+                    type:"POST",
+                    data:{sender_id:data.data.receiver_id,receiver_id:data.data.sender_id,message_id:data.data.id,"_token":$('meta[name="csrf-token"]').attr('content')},
+                    success:function(response){
 
+                    },
+                });
                 scrollToBottom();
             }
         });
@@ -174,4 +181,15 @@ window.Echo.channel(`message-notification`)
         }
     }
 }
+});
+
+
+window.Echo.channel(`message-seen.${sender_id}`)
+.listen('MessageSeenEvent',(data)=>{
+    if(sender_id == data.data.sender_id && receiver_id == data.data.receiver_id){
+        // console.log(data);
+        $(document).find('.seen_indicator').remove();
+        $(`#chat_${data.data.message_id}`).prepend(`<div class="seen_indicator"><img src="https://www.gravatar.com/avatar/${md5(data.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
+
+    }
 });

@@ -8,14 +8,14 @@
         margin-bottom: 5px;
         align-items: center;
         position: relative;
-        margin-right: 12px;
-        margin-left: 12px;
+        margin-right: 16px;
+        margin-left: 16px;
     }
     .receiver_message{
         margin-bottom: 5px;
         position: relative;
-        margin-right: 12px;
-        margin-left: 12px;
+        margin-right: 16px;
+        margin-left: 16px;
     }
     #chats .sender_message:nth-child(1){
         margin-top: 10px;

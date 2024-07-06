@@ -160,6 +160,11 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             font-size: 11px;
             margin-left: 5px
         }
+        .seen_indicator{
+            position: absolute;
+            right: -14px ;
+            bottom: 0px
+        }
     </style>
 
 </head>
