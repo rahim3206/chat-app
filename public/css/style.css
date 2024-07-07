@@ -1,0 +1,88 @@
+.searchuser{
+    width: 500px
+}
+.suggestedUser{
+    position: absolute;
+    top: 36px;
+    width: 500px;
+    left: 0px;
+    background-color: #fff;
+    z-index: 2;
+    max-height: 240px;
+    overflow-y: scroll;
+}
+.suggestedUser ul
+{
+    border-radius:0px;
+    border: none; 
+    background-color: transparent;
+}
+.suggestedUser ul li
+{
+    background-color: transparent;
+}
+
+.notifications{
+    position: absolute;
+    top: 40px;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid grey;
+    border-radius: 10px;
+    z-index: 4;
+    max-height: 320px;
+    height: 320px;
+    overflow-y: scroll;
+}
+.friendRequest{
+    position: relative;
+    padding-right: 20px !important
+}
+#requestCount,#notificationCount{
+    background-color: red;
+    color: #fff;
+    padding: 0px 4px;
+    border-radius: 50%;
+    font-size: 11px;
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+    }
+}
+#notificationUl li{
+    cursor: pointer;
+}
+#notificationUl li.unread{
+    background-color: #d2d2d2
+}
+#notificationUl li:hover{
+    background-color: #f3f3f3
+}
+.time{
+    color: grey;
+    font-size: 11px;
+    margin-left: 5px
+}
+.seen_indicator{
+    position: absolute;
+    right: -14px ;
+    bottom: 0px
+}.group_seen_indicator_container {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: -14px;
+    bottom: -10px;
+}
+
+.group_seen_indicator {
+    margin-left: 2px;
+}
