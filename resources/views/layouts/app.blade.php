@@ -164,7 +164,18 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             position: absolute;
             right: -14px ;
             bottom: 0px
+        }.group_seen_indicator_container {
+            display: flex;
+            flex-direction: row;
+            position: absolute;
+            right: -14px;
+            bottom: -10px;
         }
+
+        .group_seen_indicator {
+            margin-left: 2px;
+        }
+
     </style>
 
 </head>
@@ -362,6 +373,8 @@ https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js
             });
          });
          $(document).on('click','#backHome',function(){
+            group_id = null;
+            receiver_id = null;
             $('#user_chats').css('display','none');
          });
 

@@ -64,5 +64,8 @@ class User extends Authenticatable
     public function notificationsender() {
         return $this->hasMany(Notification::class, 'sender_id');
     }
+    public function group_last_seen() {
+        return $this->hasMany(GroupMessageSeen::class, 'sender_id');
+    }
 }
 

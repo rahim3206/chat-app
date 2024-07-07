@@ -46,11 +46,14 @@
                         }
                         $('#chats').html(html);
                         var group_html = `<div class="group_info">
-                            <div class="d-flex justify-content-center gap-2">
-                                <div class="group_profile">
-                                ${group_profile}
+                            <div class="d-flex gap-2">
+                                <a id="backHome"><i class="fa fa-angle-left"></i></a>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <div class="group_profile">
+                                    ${group_profile}
+                                    </div>
+                                    <h4 id="group_name" class="m-0">${response.group_info.name}</h4>
                                 </div>
-                                <h4 id="group_name" class="m-0">${response.group_info.name}</h4>
                             </div>
                             <div class="position-relative">
                                 <div class="group_ul d-none">
@@ -66,6 +69,26 @@
                             </div>
                         </div>`;
                         $('#chats').prepend(group_html);
+                        response.other_memeber_last_seen.forEach((other_memeber_last_seen) => {
+                        let messageElement = $(`#chat_${other_memeber_last_seen.message_id}`);
+                        let seenIndicatorContainer = messageElement.find('.group_seen_indicator_container');
+                        
+                        // Agar container nahi mila to naya container banayenge
+                        if (seenIndicatorContainer.length === 0) {
+                            seenIndicatorContainer = $('<div class="group_seen_indicator_container"></div>');
+                            messageElement.append(seenIndicatorContainer);
+                        }
+                        var member_id = `member_${other_memeber_last_seen.user_id}`
+
+                        let seenIndicator = $(`
+                            <div class="group_seen_indicator" id="${member_id}">
+                                <img src="https://www.gravatar.com/avatar/${md5(other_memeber_last_seen.user.email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px">
+                            </div>
+                        `);
+                        
+                        seenIndicatorContainer.append(seenIndicator);
+                    });
+
                         scrollToBottom();
                     }
                 },

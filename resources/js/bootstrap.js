@@ -100,8 +100,18 @@ window.Echo.channel('group-message')
                         </div>`;
         }
         $('#chats').append(html);
-
+        
         scrollToBottom();
+    }
+    if(group_id == data.data.group_id){
+        $.ajax({
+            url:"/group_seen_message",
+            type:"POST",
+            data:{group_id:data.data.group_id,user_id:sender_id,message_id:data.data.id,"_token":$('meta[name="csrf-token"]').attr('content')},
+            success:function(response){
+
+            },
+        });
     }
 });
 
@@ -167,7 +177,7 @@ window.Echo.channel(`message-notification`)
             // Check if the received notification should be added to the notification list
             if (group_ids.includes(data.data.group_id) && data.data.sender_id != sender_id || data.data.receiver_id == sender_id) {
             
-                var html = `<li class="list-group-item unread d-flex justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }">
+                var html = `<li class="list-group-item unread d-flex notification_item justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }" data-id="${ data.data.id }">
                                 <div><img src="https://www.gravatar.com/avatar/${md5(data.sender.email)}?s=150&d=wavatar" alt="" class="profile_image"></div>
                                 <div>
                                     <strong>${ data.sender.name }</strong><span class="time">Just now</span>
@@ -191,5 +201,35 @@ window.Echo.channel(`message-seen.${sender_id}`)
         $(document).find('.seen_indicator').remove();
         $(`#chat_${data.data.message_id}`).prepend(`<div class="seen_indicator"><img src="https://www.gravatar.com/avatar/${md5(data.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
 
+    }
+});
+
+window.Echo.channel(`group-message-seen`)
+.listen('GroupMessageSeenEvent', (data) => {
+    if(group_id == data.data.group_id && sender_id != data.data.user_id){
+
+        let userId = data.data.user_id;
+        let lastSeenMessageId = data.data.message_id;
+        let member_id = `member_${userId}`;
+
+        // Remove the avatar from its current location
+        $(`#${member_id}`).remove();
+
+        // Append the avatar to the new message
+        let newMessageElement = $(`#chat_${lastSeenMessageId}`);
+        let newSeenIndicatorContainer = newMessageElement.find('.group_seen_indicator_container');
+        
+        if (newSeenIndicatorContainer.length === 0) {
+            newSeenIndicatorContainer = $('<div class="group_seen_indicator_container"></div>');
+            newMessageElement.append(newSeenIndicatorContainer);
+        }
+
+        let newSeenIndicator = $(`
+            <div class="group_seen_indicator" id="${member_id}">
+                <img src="https://www.gravatar.com/avatar/${md5(data.data.user.email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px">
+            </div>
+        `);
+        
+        newSeenIndicatorContainer.append(newSeenIndicator);
     }
 });

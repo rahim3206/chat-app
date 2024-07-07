@@ -41,6 +41,7 @@ Route::post('kick_member',[GroupController::class,'kick_member'])->name('kick_me
 Route::get('search-user',[HomeController::class,'search_user'])->name('search-user');
 Route::post('send-request',[HomeController::class,'send_request'])->name('send-request');
 Route::post('seen_message',[HomeController::class,'seen_message'])->name('seen_message');
+Route::post('group_seen_message',[GroupController::class,'group_seen_message'])->name('group_seen_message');
 
 Route::get('accept-friend-request',[HomeController::class,'accept_request'])->name('accept.friend.request');
 Route::get('cancel-friend-request',[HomeController::class,'cancel_request'])->name('cancel.friend.request');

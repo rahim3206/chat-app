@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Events\GroupMessage;
+use App\Events\GroupMessageSeenEvent;
+use App\Events\Notifications;
 use App\Models\Group;
 use App\Models\GroupChat;
 use App\Models\GroupMember;
+use App\Models\GroupMessageSeen;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -39,6 +43,12 @@ class GroupController extends Controller
         $member->group_id = $group->id;
         $member->save();
 
+        $group_message = new GroupMessageSeen();
+        $group_message->user_id = auth()->user()->id;
+        $group_message->group_id = $group->id;
+        $member->message_id = 0;
+        $group_message->save();
+
         return response()->json(['status'=>'succuss','data'=>$group]);
     }
     public function search_member(Request $request)
@@ -51,6 +61,7 @@ class GroupController extends Controller
 
     public function add_member(Request $request)
     {
+        $group = Group::find($request->group_id);
         $member = new GroupMember();
         $member->user_id = $request->user_id;
         $member->group_id = $request->group_id;
@@ -66,13 +77,49 @@ class GroupController extends Controller
         $chat->save();
         $sender =auth()->user();
         event(new GroupMessage($chat,$sender));
+
+        
+
+        $notification = new Notification();
+        $notification->sender_id = auth()->user()->id;
+        $notification->receiver_id = $request->user_id ?? null;
+        $notification->group_id = $request->group_id ?? null;
+        $notification->message = "Added you in a ".$group->name.".";
+        $notification->url = null;
+        $notification->status = 0;
+        $notification->save();
+
+        event(new Notifications($notification,auth()->user()));
+        
+
+        $group_message = new GroupMessageSeen();
+        $group_message->user_id = $request->user_id;
+        $group_message->group_id = $request->group_id;
+        $member->message_id = 0;
+        $group_message->save();
+
         return response()->json(['status'=>'success','data'=>$member]);
     }
     public function load_group_chats(Request $request)
     {
         $chats = GroupChat::with('user')->where('group_id',$request->group_id)->get();
         $group_info = Group::find($request->group_id);
-        return response()->json(['status'=>'success','data'=>$chats,'group_info'=>$group_info]);
+        $user_message = GroupMessageSeen::with('user')->where('group_id',$request->group_id)->where('user_id',auth()->user()->id)->first();
+        $other_memeber_last_seen = GroupMessageSeen::with('user')->where('group_id',$request->group_id)->where('user_id','!=',auth()->user()->id)->get();
+        if($user_message == null){
+            $seen = new GroupMessageSeen();
+            $seen->user_id = auth()->user()->id;
+            $seen->group_id = $request->group_id;
+            $seen->message_id = $chats->last()->id;
+            $seen->save();
+            $user_message = $seen;
+        }else{
+            $user_message->message_id = $chats->last()->id;
+            $user_message->update();
+        }
+        event(new GroupMessageSeenEvent($user_message,auth()->user()->email));
+
+        return response()->json(['status'=>'success','data'=>$chats,'group_info'=>$group_info,'other_memeber_last_seen'=>$other_memeber_last_seen]);
     }
     public function members(Request $request)
     {
@@ -102,6 +149,7 @@ class GroupController extends Controller
     }
     public function kick_member(Request $request)
     {
+        $group = Group::find($request->group_id);
         $member = User::find($request->user_id);
         $leave = GroupMember::where('group_id',$request->group_id)->where('user_id',$request->user_id)->delete();
         $chat = new GroupChat();
@@ -113,7 +161,25 @@ class GroupController extends Controller
         $chat->save();
         $sender =auth()->user();
         event(new GroupMessage($chat,$sender));
+        $notification = new Notification();
+        $notification->sender_id = auth()->user()->id;
+        $notification->receiver_id = $request->user_id ?? null;
+        $notification->group_id = $request->group_id ?? null;
+        $notification->message = "Kicked you in a ".$group->name.".";
+        $notification->url = null;
+        $notification->status = 0;
+        $notification->save();
+
+        event(new Notifications($notification,auth()->user()));
         return response()->json(['status'=>'success','msg'=>'Group Leaved']);
+    }
+    public function group_seen_message(Request $request)
+    {
+        $user_message_seen = GroupMessageSeen::with('user')->where('user_id',$request->user_id)->where('group_id',$request->group_id)->first();
+        $user_message_seen->message_id = $request->message_id;
+        $user_message_seen->update();
+        event(new GroupMessageSeenEvent($user_message_seen,auth()->user()->email));
+        return response()->json(['status','success']);
     }
 
 }
