@@ -154,7 +154,7 @@ class HomeController extends Controller
             $notification->receiver_id = $request->receiver_id ?? null;
             $notification->group_id = $request->group_id ?? null;
             $notification->message = $message;
-            $notification->url = null;
+            $notification->url = $chat->id;
             $notification->status = 0;
             $notification->save();
 

@@ -30,7 +30,7 @@
 
     #chats{
         margin-bottom: 10px;
-        height: 70svh;
+        height:78svh;
         overflow-y: scroll;
         overflow-x: hidden;
         /* padding: 0px 15px 15px 15px; */
@@ -57,7 +57,12 @@
         display: flex;
         cursor: pointer;
         justify-content: space-between ;
-        align-items: center
+        align-items: center;
+        background-color: #fff;
+        border-top: none;
+        border-left: none;
+        border-radius: 0px;
+        border-right: none;
     }
     .messageForm{
         display: flex;
@@ -154,18 +159,31 @@
         display: none;
     }
     #main .card{
-        background-color: #fff
+        background-color: #fff;
+        overflow: hidden;
     }
     .profile_image{
-        widows: 40px;
+        width: 40px;
         height: 40px;
+        border-radius: 50%
+    }
+    .profile_image.main{
+        width: 30px;
+        height: 30px;
         border-radius: 50%
     }
     .friend.active,
     .group.active
     {
         background-color: rgb(236, 236, 236);
-        color: #000
+        color: #000;
+        border: 0px;
+        border-radius: 0px;
+    }
+    .friend:hover,
+    .group:hover
+    {
+        background-color: rgb(236, 236, 236);
     }
     .group_profile{
         position: relative;
@@ -196,10 +214,11 @@
     .userList,.groupList{
         height: 50%;
         overflow: hidden;
+        padding-left: 10px;
     }
     .userListUl{
         overflow-y: scroll;
-        height: 82%;
+        height: 76%;
     }
     #backHome{
         display: none;

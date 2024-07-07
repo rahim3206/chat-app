@@ -176,8 +176,14 @@ window.Echo.channel(`message-notification`)
         }else {
             // Check if the received notification should be added to the notification list
             if (group_ids.includes(data.data.group_id) && data.data.sender_id != sender_id || data.data.receiver_id == sender_id) {
+                var not_type = '';
+                if(data.data.receiver_id != null){
+                    not_type = `friend_${data.data.sender_id}`;
+                }else if(data.data.group_id != null){
+                    not_type = `group_${data.data.sender_id}`;
+                }
             
-                var html = `<li class="list-group-item unread d-flex notification_item justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }" data-id="${ data.data.id }">
+                var html = `<li class="list-group-item unread d-flex notification_item justify-content-start gap-2 align-item-center" id="notification-${ data.data.id }" data-id="${ data.data.id }" data-type="${not_type}" data-msg="${data.data.url}">
                                 <div><img src="https://www.gravatar.com/avatar/${md5(data.sender.email)}?s=150&d=wavatar" alt="" class="profile_image"></div>
                                 <div>
                                     <strong>${ data.sender.name }</strong><span class="time">Just now</span>

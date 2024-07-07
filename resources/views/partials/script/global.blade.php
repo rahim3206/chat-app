@@ -18,7 +18,7 @@
                     var member_count = 1;
                     response.data.forEach(group => {
                         group_ = group.group_id;
-                        html += `<li class="list-group-item group" data-id="${group.id}">
+                        html += `<li class="list-group-item group" id="group_${group.id}" data-id="${group.id}">
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="group_profile">`;
                                             group.group_members.forEach((member, index) => {

@@ -22,7 +22,7 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
@@ -69,7 +69,15 @@
                                 <ul class="list-group" id="notificationUl">
                                     @auth
                                         @foreach($notifications as $notification)
-                                            <li class="list-group-item notification_item {{ $notification->status == 0 ? 'unread' : '' }} d-flex justify-content-start gap-2 align-item-center" id="notification-{{ $notification->id }}" data-id="{{ $notification->id }}">
+                                        @php
+                                            $not_type = '';
+                                            if($notification->receiver_id != null){
+                                                $not_type = 'friend_'.$notification->sender_id;
+                                            }else if($notification->group_id != null){
+                                                $not_type = 'group_'.$notification->group_id;
+                                            }
+                                        @endphp
+                                            <li class="list-group-item notification_item {{ $notification->status == 0 ? 'unread' : '' }} d-flex justify-content-start gap-2 align-item-center" id="notification-{{ $notification->id }}" data-id="{{ $notification->id }}" data-type="{{$not_type}}" data-msg="{{ $notification->url }}">
                                                 <div><img src="{{ gravatar_url($notification->user->email) }}" alt="" class="profile_image"></div>
                                                 <div>
                                                     <strong>{{ $notification->user->name }}</strong><span class="time">{{timeElapsedString($notification->created_at)}}</span>
@@ -97,7 +105,7 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <img src="{{ gravatar_url(Auth::user()->email) }}" class="profile_image">
+                                    <img src="{{ gravatar_url(Auth::user()->email) }}" class="profile_image main">
                                     {{ Auth::user()->name }}
                                 </a>
 
@@ -119,7 +127,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="">
             @yield('content')
         </main>
     </div>

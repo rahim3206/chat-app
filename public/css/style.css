@@ -7,7 +7,7 @@
     width: 500px;
     left: 0px;
     background-color: #fff;
-    z-index: 2;
+    z-index: 10;
     max-height: 240px;
     overflow-y: scroll;
 }
@@ -61,10 +61,10 @@
     cursor: pointer;
 }
 #notificationUl li.unread{
-    background-color: #d2d2d2
+    background-color: #e7e7e7;
 }
 #notificationUl li:hover{
-    background-color: #f3f3f3
+    background-color: #dfdfdf;
 }
 .time{
     color: grey;
@@ -85,4 +85,33 @@
 
 .group_seen_indicator {
     margin-left: 2px;
+}
+
+
+::-webkit-scrollbar {
+    width: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #dfdfdf; 
+    border-radius:10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #adadad; 
+  }
+
+.border-radius-0{
+    border-radius: 0px !important;
+}
+#groups{
+    height: 200px;
+    overflow-y: scroll;
 }

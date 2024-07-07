@@ -2,12 +2,14 @@
 
 @section('content')
 @include('partials.css.home-css')
-<div class="container " id="main">
-    <div class="card">
+<div class=" " id="main">
+    <div class="card border-radius-0">
         <div class="row justify-content-center">
-        <div class="col-md-4 pr-0">
-                <div class="card-body userList">
-                    <input type="text" name="" class="form-control" placeholder="Search Friends">
+        <div class="col-md-4 p-0">
+                <div class="pb-0 pt-2 userList">
+                    <div class="px-3">
+                        <input type="text" name="" class="form-control" placeholder="Search Friends">
+                    </div>
                     <ul class="list-group mt-2 userListUl">
                         @foreach ($friends as $user)
                             @php
@@ -29,7 +31,7 @@
 
                     <button class="btn btn-info btn-sm text-white"  data-bs-toggle="modal" data-bs-target="#createGroupModal">Create</button>
                 </div>
-                <div class="card-body">
+                <div class="">
                     <ul class="list-group" id="groups">
                         
                     </ul>

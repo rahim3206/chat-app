@@ -99,6 +99,27 @@
 
             $(document).on('click','.notification_item',function(){
                 var _this = $(this);
+                var type = $(this).attr('data-type');
+                type = type.split("_");
+                var msg_id = '#chat_'+$(this).attr('data-msg');
+                if(type[0] == 'friend'){
+                    $(`#friend_${type[1]}`).trigger('click');
+                }else if(type[0] == 'group'){
+                    $(`#group_${type[1]}`).trigger('click');
+                }
+                setTimeout(() => {
+                    var $chatContainer = $('#chats');
+                    var $message = $(msg_id);
+                    
+                    if ($message.length) {
+                        $chatContainer.animate({
+                            scrollTop: $message.offset().top - $chatContainer.offset().top + $chatContainer.scrollTop() - 250
+                        }, 500); 
+                    }
+                    $(msg_id).css('background-color','#f4f4f4');
+                }, 3000);
+                
+
                 if($(this).hasClass('unread')){
                     $.ajax({
                         url:"{{ route('read-notification') }}",
