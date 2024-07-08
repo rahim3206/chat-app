@@ -23,11 +23,18 @@
         margin-bottom: 0px;
         background-color: rgb(236, 235, 235);
         padding: 4px 8px;
-        border-radius: 5px;
+        border-radius: 10px;
         width: fit-content;
         max-width: 50%;
     }
-
+    .receiver_message p{
+        background-color: rgb(0, 110, 255);
+        color: #fff;
+    }
+    .receiver_message .gr_chat_user{
+        color: #fff;
+        font-weight: 600
+    }
     #chats{
         margin-bottom: 10px;
         height:78svh;

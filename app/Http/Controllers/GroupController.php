@@ -114,7 +114,7 @@ class GroupController extends Controller
             $seen->save();
             $user_message = $seen;
         }else{
-            $user_message->message_id = $chats->last()->id;
+            $user_message->message_id = $chats->last()->id ?? 0;
             $user_message->update();
         }
         event(new GroupMessageSeenEvent($user_message,auth()->user()->email));
