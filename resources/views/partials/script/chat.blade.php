@@ -53,7 +53,8 @@
                                 ${user_profile}
                             </div>
                         </div>`);
-                        $(`#chat_${response.last_seen_id}`).prepend(`<div class="seen_indicator"><img src="https://www.gravatar.com/avatar/${md5(response.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
+                        // console.log(response.receiver_email);
+                        $(`#chat_${response.last_seen_id}`).prepend(`<div class="seen_indicator"><img data-check="${response.receiver_email}" src="https://www.gravatar.com/avatar/${md5(response.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
                         scrollToBottom();
                     }
                 },
@@ -61,7 +62,9 @@
         }
 
         $(document).on('click','.friend',function(){
-            user_profile = $(this).find('.user_name_and_pro').html();
+            var user_info_clone = $(this).find('.user_name_and_pro').clone();
+            user_info_clone.find('.last_msg').remove();
+            user_profile = user_info_clone.html();
             $('#chats').html('');
             $('#user_chats').css('display','block');
             $('#default_chat_view').addClass('d-none');

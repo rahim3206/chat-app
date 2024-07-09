@@ -77,7 +77,8 @@ class HomeController extends Controller
                                         ->where('status', 'pending')
                                         ->get();
 
-        // Get last messages and order friends by the latest message timestamp
+
+
         $friends = User::whereIn('users.id', $friendIds)
                         ->leftJoin('chats', function($join) use ($userId) {
                             $join->on('users.id', '=', 'chats.sender_id')
@@ -85,7 +86,8 @@ class HomeController extends Controller
                         })
                         ->where(function($query) use ($userId) {
                             $query->where('chats.sender_id', $userId)
-                                ->orWhere('chats.receiver_id', $userId);
+                                ->orWhere('chats.receiver_id', $userId)
+                                ->orWhereNull('chats.sender_id');
                         })
                         ->select('users.*', DB::raw('MAX(chats.created_at) as last_message_time'))
                         ->groupBy('users.id')
@@ -182,7 +184,7 @@ class HomeController extends Controller
             Chat::where('sender_id', $request->receiver_id)
             ->where('receiver_id', $request->sender_id)
             ->update(['read_' => true]);
-
+            
             $sender_message_seen = MessageSeen::where('sender_id',$request->sender_id)->where('receiver_id',$request->receiver_id)->first();
             $receiver_message_seen = MessageSeen::where('receiver_id',$request->sender_id)->where('sender_id',$request->receiver_id)->first();
             //dd($message_seen);
@@ -199,7 +201,7 @@ class HomeController extends Controller
                 $receiver_message_seen->update();
 
             }
-            $receiver = User::find($request->receiver_id);
+            $receiver = User::find($request->sender_id);
             event(new MessageSeenEvent($receiver_message_seen,$receiver->email));
 
             return response()->json(['status'=>'success','data'=>$chats,'last_seen_id'=>$last_seen_id,'receiver_email'=>$receiver->email]);

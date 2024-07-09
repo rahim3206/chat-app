@@ -13,4 +13,9 @@ class Group extends Model
     {
         return $this->hasMany(GroupMember::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(GroupChat::class);
+    }
 }

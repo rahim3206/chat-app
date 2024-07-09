@@ -21,15 +21,19 @@
     .receiver_message p
     {
         margin-bottom: 0px;
-        background-color: rgb(236, 235, 235);
         padding: 4px 8px;
-        border-radius: 10px;
-        width: fit-content;
         max-width: 50%;
+        width: fit-content;
+    }
+    .sender_message p{
+        background-color: rgb(236, 235, 235);
+        border-radius: 10px 0px 10px 10px;
+
     }
     .receiver_message p{
-        background-color: rgb(0, 110, 255);
+        background-color: var(--theme);
         color: #fff;
+        border-radius: 0px 10px 10px 10px;
     }
     .receiver_message .gr_chat_user{
         color: #fff;
@@ -65,7 +69,8 @@
         cursor: pointer;
         justify-content: space-between ;
         align-items: center;
-        background-color: #fff;
+        background-color: var(--theme);
+        color: #fff;
         border-top: none;
         border-left: none;
         border-radius: 0px;
@@ -144,7 +149,8 @@
         top: 0px;
         z-index: 3;
         padding: 10px;
-        background: #f8fafc;
+        background: var(--theme);
+        color: #fff;
     }
     .group_setting{
         cursor: pointer;
@@ -182,20 +188,42 @@
     .friend.active,
     .group.active
     {
-        background-color: rgb(236, 236, 236);
-        color: #000;
+        background-color: var(--hover-theme);
+        color: #fff;
         border: 0px;
         border-radius: 0px;
     }
     .friend:hover,
     .group:hover
     {
-        background-color: rgb(236, 236, 236);
+        background-color:var(--hover-theme);
+        color: #fff;
     }
     .group_profile{
         position: relative;
         width: 40px;
         height: 40px;
+    }
+    .sidebar{
+        background-color: var(--theme);
+    }
+    #friend_group
+    {
+        padding: 5px 18px 0px 18px;
+    }
+    #friend_group li
+    {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #friend_group li button{
+        width: 100%;
+        color: #fff;
+    }
+    #friend_group li button.active{
+        color: var(--theme)
     }
     .g_pro_1,
     .g_pro_2,
@@ -219,9 +247,10 @@
         left: 5px;
     }
     .userList,.groupList{
-        height: 50%;
+        height: 100%;
         overflow: hidden;
         padding-left: 10px;
+        background-color: var(--theme);
     }
     .userListUl{
         overflow-y: scroll;
@@ -231,6 +260,11 @@
         display: none;
     }#default_chat_view{
         border-left: 1px solid #ccced0;
+    }
+    .user_name_and_pro{
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     @media(max-width:800px){
         .user_chats{

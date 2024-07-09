@@ -1,3 +1,9 @@
+<style>
+    :root{
+        --theme:#222222;
+        --hover-theme:#3d3d3d;
+    }
+</style>
 <script>
     let sender_id = @json(auth()->user()->id ?? null);
     let receiver_id ;
@@ -30,8 +36,12 @@
                                                 }
                                             });
 
-                        html += `</div>
-                                    <span>${group.name}</span></div>`;
+                                        html += `</div><div>
+                                            
+                                    <span><strong>${group.name}</strong></span>
+                                    <p class="m-0 last_msg">${group.last_message && group.last_message.message ? group.last_message.message.slice(0, 40) + '...' : 'Say hi to your new group'}</p>
+                                    </div>
+                                </div>`;
                                 
                         html += `<span class="badge bg-primary read" id="unread_${group.id}">0</span>
                                 </li>`;

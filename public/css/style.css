@@ -1,5 +1,9 @@
+
+#main,.main .card,#main .card .row{
+    height: 91svh;
+}
 .searchuser{
-    width: 500px
+    width: 503px !important;
 }
 .suggestedUser{
     position: absolute;
@@ -25,14 +29,18 @@
 .notifications{
     position: absolute;
     top: 40px;
-    width: 300px;
+    right: 0px;
+    width: 350px;
     background-color: #fff;
-    border: 1px solid grey;
-    border-radius: 10px;
+    border: 1px solid rgb(182, 182, 182);
+    border-radius: 0px;
     z-index: 4;
-    max-height: 320px;
-    height: 320px;
+    max-height: 400px;
+    height: 400px;
     overflow-y: scroll;
+}
+.notifications ul{
+    border-radius:0px;
 }
 .friendRequest{
     position: relative;
@@ -112,6 +120,6 @@
     border-radius: 0px !important;
 }
 #groups{
-    height: 200px;
+    height: 100%;
     overflow-y: scroll;
 }

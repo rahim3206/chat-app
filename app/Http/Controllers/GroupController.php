@@ -16,14 +16,23 @@ use Illuminate\Http\Request;
 class GroupController extends Controller
 {
     public function index(Request $request)
-    {
-        $user_id = auth()->user()->id;
-        $group_ids = GroupMember::where('user_id', $user_id)->pluck('group_id')->toArray();
-        $additional_group_ids = Group::where('user_id', $request->user_id)->pluck('id')->toArray();
-        $group_ids = array_merge($group_ids, $additional_group_ids);
-        $groups = Group::with('group_members.user')->whereIn('id', $group_ids)->get();
-        return response()->json(['status'=>'success','data'=> $groups]);
-    }
+{
+    $user_id = auth()->user()->id;
+    $group_ids = GroupMember::where('user_id', $user_id)->pluck('group_id')->toArray();
+    $additional_group_ids = Group::where('user_id', $request->user_id)->pluck('id')->toArray();
+    $group_ids = array_merge($group_ids, $additional_group_ids);
+
+    $groups = Group::with('group_members.user')
+        ->whereIn('id', $group_ids)
+        ->get();
+
+    $groups->each(function ($group) {
+        $group->last_message = $group->messages()->latest()->first();
+    });
+
+    return response()->json(['status' => 'success', 'data' => $groups]);
+}
+
     public function store(Request $request)
     {
         $group = new Group();

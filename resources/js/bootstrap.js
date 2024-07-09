@@ -45,10 +45,7 @@ window.Echo.channel('update-chat')
 window.Echo.channel('chat-message')
         .listen('Message',(data) => {
 
-            // if(sender_id == data.data.receiver_id){
-            //     showNotification("Hello", "New Message Received");
-            // }
-            // console.log(data.data.sender_id);
+            $(`#friend_${data.data.sender_id}`).find('.last_msg').text(data.data.message.slice(0, 30)+'...');
             let element = $('#friend_'+data.data.sender_id);
             element.prependTo(element.parent());
             if(sender_id == data.data.receiver_id && receiver_id == data.data.sender_id){
@@ -80,6 +77,7 @@ window.Echo.channel('chat-message')
 window.Echo.channel('group-message')
 .listen('GroupMessage',(data) => {
     // console.log(data);
+    $(`#group_${data.data.group_id}`).find('.last_msg').text(data.data.message.slice(0, 30)+'...');
     if(data.data.type == 'alert'){
         load_groups();
     }
@@ -203,7 +201,6 @@ window.Echo.channel(`message-notification`)
 window.Echo.channel(`message-seen.${sender_id}`)
 .listen('MessageSeenEvent',(data)=>{
     if(sender_id == data.data.sender_id && receiver_id == data.data.receiver_id){
-        // console.log(data);
         $(document).find('.seen_indicator').remove();
         $(`#chat_${data.data.message_id}`).prepend(`<div class="seen_indicator"><img src="https://www.gravatar.com/avatar/${md5(data.receiver_email)}?s=150&d=wavatar" alt="Receiver Profile" class="rounded-circle" height="12px" width="12px"></div>`);
 
