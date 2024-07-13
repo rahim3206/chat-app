@@ -45,6 +45,7 @@ Route::post('group_seen_message',[GroupController::class,'group_seen_message'])-
 
 Route::get('accept-friend-request',[HomeController::class,'accept_request'])->name('accept.friend.request');
 Route::get('cancel-friend-request',[HomeController::class,'cancel_request'])->name('cancel.friend.request');
+Route::get('search-friend',[HomeController::class,'search_friend'])->name('search-friend');
 
 // Notification
 Route::post('read-notification',[HomeController::class,'read_notification'])->name('read-notification');

@@ -287,5 +287,8 @@
             padding: 0px 12px 0px 5px;
             cursor: pointer;
         }
+        #chats{
+            height: 90svh;
+        }
     }
 </style>

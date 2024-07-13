@@ -7,7 +7,7 @@
         <div class="row justify-content-center">
         <div class="col-md-4 p-0 sidebar">
             <div class="px-3 mt-3">
-                <input type="text" name="" class="form-control" placeholder="Search Friends">
+                <input type="text" name="" class="form-control" placeholder="Search Friends" id="search_friend">
             </div>
             <ul class="nav nav-tabs" id="friend_group" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -20,7 +20,8 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="pb-0 pt-2 userList">
-                    <ul class="list-group mt-2 userListUl">
+                    <ul class="list-group mt-2 userListUl" id="userListUl">
+                        
                         @foreach ($friends as $user)
                             @php
                                 $unread_chats = \App\Models\Chat::where('receiver_id', Auth::user()->id)->where('sender_id', $user->id)->where('read_', 0)->count();
@@ -74,7 +75,7 @@
                         
                     </div>
                     <div  class="messageForm">
-                        <input type="text" name="" id="message" class="form-control" placeholder="Message...">
+                        <textarea type="text" name="" id="message" class="form-control" placeholder="Message..." rows="1"></textarea>
                         <button id="emojiButton">😀</button>
                         <input type="file" name="" hidden id="file_upload">
                         <label id="imageButton" for="file_upload"><i class="fa fa-image"></i></label>

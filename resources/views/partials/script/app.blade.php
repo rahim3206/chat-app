@@ -135,4 +135,75 @@
                 }
             });
         });
+    var window_height = $(window).height();
+    $('#userListUl').css('height', window_height - 180);
+    $('#groups').css('height', window_height - 160);
+
+    $(document).on('keyup','#search_friend',function(){
+        let value = $(this).val();
+        var search_type = 'friend';
+        if($('#home-tab').hasClass('active')){
+            search_type = 'friend';
+        }else if($('#profile-tab').hasClass('active')){
+            search_type = 'group';
+        }
+
+        $.ajax({    
+            url:"{{ route('search-friend') }}",
+            type:"GET",
+            data:{value,search_type},
+            success:function(response){
+                var member_count = 1;
+                if(response.status == 'success'){
+                    //console.log(response.data);
+                    var html = '';
+                    if(search_type == 'friend'){
+                        response.data.forEach(user => {
+                            html += `<li class="list-group-item friend " data-id="${user.id}" id="friend_${user.id}">
+                                    <div class="user_name_and_pro">
+                                        <div>
+                                            <img src="https://www.gravatar.com/avatar/${md5(user.email)}?s=150&d=wavatar" class="profile_image" alt="">
+                                        </div>
+                                        <div>
+                                            <span><strong>${user.name}</strong> <span class="status offline" id="status_${user.id}"></span></span><br>
+                                            <span class="last_msg">${user.last_message && user.last_message ? user.last_message.slice(0, 40) + '...' : 'Say hi to '+user.name}</span>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-primary read" id="unread_${user.id}">${user.unread_chats}</span>
+                                </li>`;
+                        });
+                        $('#userListUl').html(html);
+                    }
+                    else{
+                        response.data.forEach(group => {
+                            html += `<li class="list-group-item group" id="group_${group.id}" data-id="${group.id}">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="group_profile">`;
+                                            group.group_members.forEach((member, index) => {
+                                                index++;
+                                                if (index < 4) {
+                                                    const avatarUrl = `https://www.gravatar.com/avatar/${md5(member.user.email)}?s=150&d=wavatar`;
+                                                    html += `<img src="${avatarUrl}" alt="avatar" class="g_pro_${index}">`;
+                                                    member_count++;
+                                                }
+                                            });
+
+                                        html += `</div><div>
+                                            
+                                    <span><strong>${group.name}</strong></span>
+                                    <p class="m-0 last_msg">${group.last_message && group.last_message.message ? group.last_message.message.slice(0, 40) + '...' : 'Say hi to your new group'}</p>
+                                    </div>
+                                </div>`;
+                                
+                        html += `<span class="badge bg-primary read" id="unread_${group.id}">0</span>
+                                </li>`;
+                        });
+                        $('#groups').html(html);
+
+                    }
+                  
+                }
+            }
+        });
+    });
 </script>

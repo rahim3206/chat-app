@@ -1,7 +1,7 @@
 <style>
     :root{
-        --theme:#222222;
-        --hover-theme:#3d3d3d;
+        --theme:#b6004c;
+        --hover-theme:#cf0056;
     }
 </style>
 <script>
@@ -69,5 +69,6 @@
         }
     }
 
+    // console.log(window_height);
 
 </script>

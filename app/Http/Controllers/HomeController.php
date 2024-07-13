@@ -56,44 +56,39 @@ class HomeController extends Controller
         })
         ->where('status', 0)
         ->get();
-    
-        // Get friend relationships
-        $friendRelationships = Friend::where(function($query) use ($userId) {
-            $query->where('user_id', $userId)
-                ->orWhere('friend_id', $userId);
-        })->get();
-
-        // Extract friend IDs
-        $friendIds = $friendRelationships->map(function($friend) use ($userId) {
-            return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
-        });
-
-        // Get friends
-        $friends = User::whereIn('id', $friendIds)->get();
-
         // Get friend requests
         $friend_requests = FriendRequest::with('sender', 'receiver')
                                         ->where('receiver_id', $userId)
                                         ->where('status', 'pending')
                                         ->get();
-
-
-
-        $friends = User::whereIn('users.id', $friendIds)
-                        ->leftJoin('chats', function($join) use ($userId) {
-                            $join->on('users.id', '=', 'chats.sender_id')
-                                ->orOn('users.id', '=', 'chats.receiver_id');
-                        })
-                        ->where(function($query) use ($userId) {
-                            $query->where('chats.sender_id', $userId)
-                                ->orWhere('chats.receiver_id', $userId)
-                                ->orWhereNull('chats.sender_id');
-                        })
-                        ->select('users.*', DB::raw('MAX(chats.created_at) as last_message_time'))
-                        ->groupBy('users.id')
-                        ->orderBy('last_message_time', 'desc')
-                        ->get();
-
+    
+        $friendRelationships = Friend::where(function($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('friend_id', $userId);
+        })->get();
+        
+        // Extract friend IDs
+        $friendIds = $friendRelationships->map(function($friend) use ($userId) {
+            return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
+        });
+        
+        // Get friends
+        $friends = User::whereIn('id', $friendIds)->get();
+        
+        // Get friends with last message time
+        $friendsWithLastMessage = User::whereIn('users.id', $friendIds)
+            ->leftJoin('chats', function($join) use ($userId) {
+                $join->on('users.id', '=', 'chats.sender_id')
+                    ->orOn('users.id', '=', 'chats.receiver_id');
+            })
+            ->select('users.*', DB::raw('MAX(chats.created_at) as last_message_time'))
+            ->groupBy('users.id')
+            ->orderBy('last_message_time', 'desc')
+            ->get();
+        
+        // Combine friends list to include those without messages
+        $friendsWithoutMessages = $friends->diffKeys($friendsWithLastMessage->keyBy('id'));
+        $friends = $friendsWithLastMessage->merge($friendsWithoutMessages);
         return view('home', compact('friends', 'friend_requests','notifications','unread_notifications'));
     }
 
@@ -193,12 +188,12 @@ class HomeController extends Controller
                 $seen = new MessageSeen();
                 $seen->sender_id = $request->receiver_id;
                 $seen->receiver_id = $request->sender_id;
-                $seen->message_id = $chats->last()->id;
+                $seen->message_id = $chats->last()->id ?? 0;
                 $seen->save();
                 $receiver_message_seen = $seen;
             }else{
-                $receiver_message_seen->message_id = $chats->last()->id;
-                $receiver_message_seen->update();
+                $receiver_message_seen->message_id = $chats->last()->id ?? 0;
+                $receiver_message_seen->update() ;
 
             }
             $receiver = User::find($request->sender_id);
@@ -380,4 +375,102 @@ class HomeController extends Controller
         event(new MessageSeenEvent($receiver_message_seen,auth()->user()->email));
         return response()->json(['status','success']);
     }
+    public function search_friend(Request $request)
+{
+    $search = $request->query('value'); // Retrieve the query parameter correctly
+    $type = $request->query('search_type'); // Retrieve the search_type parameter correctly
+    $userId = auth()->user()->id;
+
+    if ($type == 'friend') {
+        $friendRelationships = Friend::where(function($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('friend_id', $userId);
+        })->get();
+        
+        // Extract friend IDs
+        $friendIds = $friendRelationships->map(function($friend) use ($userId) {
+            return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
+        });
+
+        // Get friends with last message time and last message
+        $friendsWithLastMessage = User::whereIn('users.id', $friendIds)
+            ->leftJoin('chats', function($join) use ($userId) {
+                $join->on('users.id', '=', 'chats.sender_id')
+                    ->orOn('users.id', '=', 'chats.receiver_id');
+            })
+            ->select('users.*', 
+                DB::raw('MAX(chats.created_at) as last_message_time'), 
+                DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(chats.message ORDER BY chats.created_at DESC), ",", 1) as last_message')
+            )
+            ->groupBy('users.id')
+            ->orderBy('last_message_time', 'desc')
+            ->get();
+
+        // Filter friends by search query
+        $filteredFriends = $friendsWithLastMessage->filter(function($friend) use ($search) {
+            return stripos($friend->name, $search) !== false;
+        });
+
+        // Get friends without messages and filter by search query
+        $friendsWithoutMessages = User::whereIn('id', $friendIds)
+            ->whereNotIn('id', $friendsWithLastMessage->pluck('id'))
+            ->where('name', 'LIKE', '%' . $search . '%')
+            ->get();
+
+        // Combine friends list
+        $friends = $filteredFriends->merge($friendsWithoutMessages);
+
+        // Calculate unseen messages and enhance friend data
+        $friends = $friends->map(function($friend) use ($userId) {
+            $unreadChats = Chat::where('receiver_id', $userId)
+                ->where('sender_id', $friend->id)
+                ->where('read_', 0)
+                ->count();
+
+            $lastMessage = Chat::where(function($query) use($friend, $userId) {
+                    $query->where('sender_id', $friend->id)
+                          ->orWhere('sender_id', $userId);
+                })
+                ->where(function($query) use($friend, $userId) {
+                    $query->where('receiver_id', $friend->id)
+                          ->orWhere('receiver_id', $userId);
+                })
+                ->latest()
+                ->first();
+
+            $friend->unread_chats = $unreadChats;
+            $friend->last_message = $lastMessage ? $lastMessage->message : null;
+
+            return $friend;
+        });
+
+        return response()->json(['status' => 'success', 'data' => $friends]);
+    } elseif ($type == 'group') {
+        $userId = auth()->user()->id;
+        $groupIds = GroupMember::where('user_id', $userId)->pluck('group_id')->toArray();
+        $additionalGroupIds = Group::where('user_id', $userId)->pluck('id')->toArray();
+        $groupIds = array_merge($groupIds, $additionalGroupIds);
+
+        // Get groups the user is a member of
+        $groups = Group::with(['group_members.user', 'messages' => function($query) {
+                $query->latest()->first();
+            }])
+            ->whereIn('id', $groupIds)
+            ->where('name', 'LIKE', '%' . $search . '%') // Filter groups by search query
+            ->get();
+
+        // Add last message to each group
+        $groups->each(function ($group) {
+            $group->last_message = $group->messages->first();
+        });
+
+        return response()->json(['status' => 'success', 'data' => $groups]);
+    }
+
+    return response()->json(['status' => 'error', 'message' => 'Invalid search type'], 400);
+}
+
+    
+
+
 }

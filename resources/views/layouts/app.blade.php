@@ -131,6 +131,7 @@
             @yield('content')
         </main>
     </div>
+    <audio src="{{ asset('notification_sound.mp3') }}" id="notificationSound"></audio>
     <script type="module" defer>
         import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0';
 

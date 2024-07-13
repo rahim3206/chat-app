@@ -44,7 +44,9 @@ window.Echo.channel('update-chat')
 
 window.Echo.channel('chat-message')
         .listen('Message',(data) => {
-
+            if(sender_id == data.data.receiver_id){
+                $('#notificationSound').trigger('play');
+            }
             $(`#friend_${data.data.sender_id}`).find('.last_msg').text(data.data.message.slice(0, 30)+'...');
             let element = $('#friend_'+data.data.sender_id);
             element.prependTo(element.parent());
