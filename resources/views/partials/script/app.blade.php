@@ -61,6 +61,7 @@
                         $('#requestCount').text(Number($('#requestCount').text()) - 1);
                         _this.text('Accepted').attr('disabled',true);
                         _this.parent().find('.cancelRequestbtn').attr('disabled',true);
+                        load_friends();
                     }
                 },
             });

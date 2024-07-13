@@ -44,7 +44,13 @@
 }
 .friendRequest{
     position: relative;
-    padding-right: 20px !important
+    padding-right: 20px !important;
+    width: fit-content;
+}
+.notificationBtn{
+    width: fit-content;
+    position: relative;
+    padding-right: 20px !important;
 }
 #requestCount,#notificationCount{
     background-color: red;
@@ -122,4 +128,25 @@
 #groups{
     height: 100%;
     overflow-y: scroll;
+}
+
+@media(max-width: 768px){
+    .searchuser{
+        width: 100% !important;
+        margin-top: 10px;
+    }
+    .navbar-nav.ms-auto{
+        flex-direction: row !important;
+        justify-content: space-between;
+    }
+    .suggestedUser{
+        top: 47px;
+        width: 100%;
+    }
+    .real_notification{
+        right: -83px !important;
+    }
+    #friendRequest{
+        right: -115px;
+    }
 }

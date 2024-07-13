@@ -4,8 +4,8 @@
 
         var file = null ;
         var edit_chat_id = null;
-        var user_profile = '';
-        
+        var user_profile = ''; 
+
         function load_chats(){
             $.ajax({
                 url:"{{route('load_chats')}}",
@@ -209,7 +209,18 @@
             $('#message').val(text);
             $('#sendMessage').text('Update');
 
-        })
+        });
+        
+        function shift_nav(){
+            var rightNav = $('#rightNav').html();
+            var leftNav = $('#leftNav').html();
+            $('#rightNav').remove();
+            $('#navbar-brand').after(`<ul class="navbar-nav ms-auto">${rightNav}</ul><ul class="navbar-nav" style="width:100%">${leftNav}</ul>`);
+        }
+        var document_width = $(window).width();
+        if(document_width <= 767){ 
+            shift_nav();
+        }
     });
 
 </script>

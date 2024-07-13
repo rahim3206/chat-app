@@ -51,6 +51,18 @@
             },
         });
     }
+    function load_friends(){
+            $.ajax({
+                url:"{{route('load-friend')}}",
+                type:"GET",
+                success:function(response){
+                    if(response.status == 'success'){
+                        $('#userListUl').html(response.html);
+                    }
+                },
+            })
+        }
+        load_friends();
     function showNotification(title, body) {
         if (!("Notification" in window)) {
             alert("This browser does not support desktop notifications");
@@ -68,7 +80,5 @@
             });
         }
     }
-
-    // console.log(window_height);
 
 </script>

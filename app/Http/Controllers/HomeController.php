@@ -469,7 +469,39 @@ class HomeController extends Controller
 
     return response()->json(['status' => 'error', 'message' => 'Invalid search type'], 400);
 }
-
+    public function load_friend(Request $request)
+    {
+        $userId = auth()->user()->id;
+        $friendRelationships = Friend::where(function($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('friend_id', $userId);
+        })->get();
+        
+        // Extract friend IDs
+        $friendIds = $friendRelationships->map(function($friend) use ($userId) {
+            return $friend->user_id == $userId ? $friend->friend_id : $friend->user_id;
+        });
+        
+        // Get friends
+        $friends = User::whereIn('id', $friendIds)->get();
+        
+        // Get friends with last message time
+        $friendsWithLastMessage = User::whereIn('users.id', $friendIds)
+            ->leftJoin('chats', function($join) use ($userId) {
+                $join->on('users.id', '=', 'chats.sender_id')
+                    ->orOn('users.id', '=', 'chats.receiver_id');
+            })
+            ->select('users.*', DB::raw('MAX(chats.created_at) as last_message_time'))
+            ->groupBy('users.id')
+            ->orderBy('last_message_time', 'desc')
+            ->get();
+        
+        // Combine friends list to include those without messages
+        $friendsWithoutMessages = $friends->diffKeys($friendsWithLastMessage->keyBy('id'));
+        $friends = $friendsWithLastMessage->merge($friendsWithoutMessages);
+        $view = view('partials.user', compact('friends'))->render();
+        return response()->json(['status' => 'success', 'html' => $view]);
+    }
     
 
 

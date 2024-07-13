@@ -23,16 +23,13 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" id="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
+                
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav" id="leftNav">
                         <div class="position-relative">
                             <input type="search" class="form-control searchuser" id="searchuser" autocomplete="off" placeholder="Search people's here...">
                             <div class="suggestedUser d-none" id="suggestedUser">
@@ -44,7 +41,7 @@
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto" id="rightNav">
                         <!-- Authentication Links -->
                         <li class="nav-item position-relative">
                             <a href="javascript:void(0)" class="nav-link friendRequest"><i class="fa fa-group"></i> <span id="requestCount">{{ count($friend_requests ?? [] ) }}</span></a>
@@ -65,7 +62,7 @@
                         </li>
                         <li class="nav-item position-relative">
                             <a href="javascript:void(0)" class="nav-link notificationBtn"><i class="fa fa-bell"></i> <span id="notificationCount">{{ count($unread_notifications ?? [] ) }}</span></a>
-                            <div class="notifications d-none" style="right: 0">
+                            <div class="notifications d-none real_notification" style="right: 0">
                                 <ul class="list-group" id="notificationUl">
                                     @auth
                                         @foreach($notifications as $notification)
