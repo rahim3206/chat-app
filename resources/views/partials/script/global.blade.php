@@ -1,7 +1,7 @@
 <style>
     :root{
-        --theme:#b6004c;
-        --hover-theme:#cf0056;
+        --theme:rgb(2,0,36);
+        --hover-theme:rgb(3, 0, 56);
     }
 </style>
 <script>

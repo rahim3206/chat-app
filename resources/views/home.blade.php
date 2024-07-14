@@ -53,7 +53,7 @@
                     <div  class="messageForm">
                         <textarea type="text" name="" id="message" class="form-control" placeholder="Message..." rows="1"></textarea>
                         <button id="emojiButton">😀</button>
-                        <input type="file" name="" hidden id="file_upload">
+                        <input type="file" name="" hidden id="file_upload" accept="image/*">
                         <label id="imageButton" for="file_upload"><i class="fa fa-image"></i></label>
                         <button id="sendMessage" class="btn btn-info text-white" >Send</button>
                     </div>
