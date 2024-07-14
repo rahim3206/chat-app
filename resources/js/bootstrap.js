@@ -53,7 +53,7 @@ window.Echo.channel('chat-message')
             if(sender_id == data.data.receiver_id && receiver_id == data.data.sender_id){
                 if(data.data.type == 'file'){
                     var html = `<div class="receiver_message" id="chat_${data.data.id}">
-                                    <img src="images/${data.data.message}" width="auto" height="100px">`;
+                                    <img src="images/${data.data.message}" width="auto" height="100px"  class="chat_img">`;
                         if(data.data.sender_id != sender_id){
                             html += `<a href="{{ asset('images') }}/${data.data.message}" class="download_image" download><i class="fa fa-download"></i></a>`;
                         }
@@ -79,6 +79,9 @@ window.Echo.channel('chat-message')
 window.Echo.channel('group-message')
 .listen('GroupMessage',(data) => {
     // console.log(data);
+    if (group_ids.includes(data.data.group_id) && data.data.sender_id != sender_id){
+        $('#notificationSound').trigger('play');
+    }
     $(`#group_${data.data.group_id}`).find('.last_msg').text(data.data.message.slice(0, 30)+'...');
     if(data.data.type == 'alert'){
         load_groups();
@@ -87,7 +90,7 @@ window.Echo.channel('group-message')
         if(data.data.type == 'file'){
             var html = `<div class="receiver_message" id="chat_${data.data.id}">
                             <span class="gr_file_chat_user">${data.sender.name}</span>
-                            <img src="images/${data.data.message}" width="auto" height="100px">`;
+                            <img src="images/${data.data.message}" width="auto" height="100px  class="chat_img">`;
                     if(data.data.sender_id != sender_id){
                         html += `<a href="{{ asset('images') }}/${data.data.message}" class="download_image" download><i class="fa fa-download"></i></a>`;
                 }

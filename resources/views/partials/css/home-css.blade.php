@@ -25,6 +25,12 @@
         max-width: 50%;
         width: fit-content;
     }
+    .sender_message .chat_img,
+    .receiver_message .chat_img
+    {
+        width: 35%;
+        height: auto;
+    }
     .sender_message p{
         background-color: rgb(236, 235, 235);
         border-radius: 10px 0px 10px 10px;

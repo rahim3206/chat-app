@@ -31,7 +31,7 @@
                                 if(response.data[i].sender_id == sender_id){
                                     html += `<a href="{{ asset('images') }}/${response.data[i].message}" download class="download_image"><i class="fa fa-download"></i></a> <i class="fa fa-trash delete_chat" data-id="${response.data[i].id}"></i>`;
                                 }
-                                html += `<img src="{{ asset('images') }}/${response.data[i].message}" height="100px" width="auto">`;
+                                html += `<img src="{{ asset('images') }}/${response.data[i].message}" height="100px" width="auto" class="chat_img">`;
                                 if(response.data[i].sender_id != sender_id){
                                     html += `<a href="{{ asset('images') }}/${response.data[i].message}" class="download_image" download><i class="fa fa-download"></i></a>`;
                                 }
@@ -106,7 +106,7 @@
                                         html += `<span class="gr_file_chat_user">{{ auth()->user()->name }}</span>`;
                                     }
                                     html +=`<a href="{{ asset('images') }}/${response.data.message}" download class="download_image"><i class="fa fa-download"></i></a><i class="fa fa-trash delete_chat" data-id="${response.data.id}"></i>`;
-                                    html +=`<img src="{{ asset('images') }}/${response.data.message}" height="100px" width="auto">
+                                    html +=`<img src="{{ asset('images') }}/${response.data.message}" height="100px" width="auto" class="chat_img">
                                         </div>`;
                             }else{
                                 var html = `<div class="sender_message" id="chat_${response.data.id}">`;

@@ -196,7 +196,7 @@ class HomeController extends Controller
                 $receiver_message_seen->update() ;
 
             }
-            $receiver = User::find($request->sender_id);
+            $receiver = User::find($request->receiver_id);
             event(new MessageSeenEvent($receiver_message_seen,$receiver->email));
 
             return response()->json(['status'=>'success','data'=>$chats,'last_seen_id'=>$last_seen_id,'receiver_email'=>$receiver->email]);
