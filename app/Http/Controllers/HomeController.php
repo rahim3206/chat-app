@@ -94,7 +94,7 @@ class HomeController extends Controller
 
     public function send_message(Request $request)
     {
-        try {
+        // try {
             if($request->receiver_id != null){
                 $chat = new Chat();
                 $chat->sender_id = $request->sender_id;
@@ -161,9 +161,9 @@ class HomeController extends Controller
 
             return response()->json(['status'=>'success','data'=>$chat]);
 
-        } catch (\Exception $th) {
-            return response()->json(['status'=>'error','data'=>$th]);
-        }
+        // } catch (\Exception $th) {
+        //     return response()->json(['status'=>'error','data'=>$th]);
+        // }
     }
     public function load_chats(Request $request)
     {

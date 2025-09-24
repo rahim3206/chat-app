@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->text('image');
+            $table->text('image')->nullable();
             $table->bigInteger('member_limit');
             $table->integer('status');
             $table->timestamps();

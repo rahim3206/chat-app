@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer('sender_id');
             $table->integer('receiver_id');
             $table->text('message');
+            $table->integer('read_')->default(0);
+            $table->string('type');
             $table->timestamps();
         });
     }

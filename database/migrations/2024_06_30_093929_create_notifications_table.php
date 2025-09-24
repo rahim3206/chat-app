@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('sender_id');
-            $table->bigInteger('receiver_id');
-            $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
+            $table->bigInteger('receiver_id')->nullable();
+            $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete()->nullable();
             $table->text('message');
-            $table->text('url');
+            $table->text('url')->nullable();
             $table->integer('status');
             $table->timestamps();
         });
